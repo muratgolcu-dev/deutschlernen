@@ -1,0 +1,23 @@
+import { VocabularyWord } from '@/lib/types';
+export const timeWords: VocabularyWord[] = [
+  { id: 'time-1', german: 'Uhr', turkish: 'Saat', article: 'die', partOfSpeech: 'noun', plural: 'Uhren', exampleSentence: 'Es ist drei Uhr.', exampleTranslation: 'Saat üç.', category: 'time', level: 'A1' },
+  { id: 'time-2', german: 'Stunde', turkish: 'Saat (süre)', article: 'die', partOfSpeech: 'noun', plural: 'Stunden', exampleSentence: 'Der Film dauert zwei Stunden.', exampleTranslation: 'Film iki saat sürüyor.', category: 'time', level: 'A1' },
+  { id: 'time-3', german: 'Minute', turkish: 'Dakika', article: 'die', partOfSpeech: 'noun', plural: 'Minuten', exampleSentence: 'Warte fünf Minuten!', exampleTranslation: 'Beş dakika bekle!', category: 'time', level: 'A1' },
+  { id: 'time-4', german: 'Tag', turkish: 'Gün', article: 'der', partOfSpeech: 'noun', plural: 'Tage', exampleSentence: 'Heute ist ein schöner Tag.', exampleTranslation: 'Bugün güzel bir gün.', category: 'time', level: 'A1' },
+  { id: 'time-5', german: 'Woche', turkish: 'Hafta', article: 'die', partOfSpeech: 'noun', plural: 'Wochen', exampleSentence: 'Nächste Woche habe ich Urlaub.', exampleTranslation: 'Gelecek hafta tatilim var.', category: 'time', level: 'A1' },
+  { id: 'time-6', german: 'Monat', turkish: 'Ay', article: 'der', partOfSpeech: 'noun', plural: 'Monate', exampleSentence: 'Welcher Monat ist jetzt?', exampleTranslation: 'Şimdi hangi ay?', category: 'time', level: 'A1' },
+  { id: 'time-7', german: 'Jahr', turkish: 'Yıl', article: 'das', partOfSpeech: 'noun', plural: 'Jahre', exampleSentence: 'Ich lerne seit einem Jahr Deutsch.', exampleTranslation: 'Bir yıldır Almanca öğreniyorum.', category: 'time', level: 'A1' },
+  { id: 'time-8', german: 'Morgen', turkish: 'Sabah', article: 'der', partOfSpeech: 'noun', exampleSentence: 'Am Morgen trinke ich Kaffee.', exampleTranslation: 'Sabahleyin kahve içerim.', category: 'time', level: 'A1' },
+  { id: 'time-9', german: 'Abend', turkish: 'Akşam', article: 'der', partOfSpeech: 'noun', plural: 'Abende', exampleSentence: 'Am Abend lese ich ein Buch.', exampleTranslation: 'Akşamları kitap okurum.', category: 'time', level: 'A1' },
+  { id: 'time-10', german: 'Nacht', turkish: 'Gece', article: 'die', partOfSpeech: 'noun', plural: 'Nächte', exampleSentence: 'In der Nacht schlafe ich.', exampleTranslation: 'Geceleri uyurum.', category: 'time', level: 'A1' },
+  { id: 'time-11', german: 'Montag', turkish: 'Pazartesi', article: 'der', partOfSpeech: 'noun', exampleSentence: 'Am Montag beginnt die Arbeit.', exampleTranslation: 'Pazartesi iş başlar.', category: 'time', level: 'A1' },
+  { id: 'time-12', german: 'heute', turkish: 'bugün', article: null, partOfSpeech: 'adverb', exampleSentence: 'Heute ist Mittwoch.', exampleTranslation: 'Bugün Çarşamba.', category: 'time', level: 'A1' },
+  { id: 'time-13', german: 'gestern', turkish: 'dün', article: null, partOfSpeech: 'adverb', exampleSentence: 'Gestern war ich müde.', exampleTranslation: 'Dün yorgundum.', category: 'time', level: 'A1' },
+  { id: 'time-14', german: 'morgen', turkish: 'yarın', article: null, partOfSpeech: 'adverb', exampleSentence: 'Morgen gehe ich einkaufen.', exampleTranslation: 'Yarın alışverişe gideceğim.', category: 'time', level: 'A1' },
+  { id: 'time-15', german: 'jetzt', turkish: 'şimdi', article: null, partOfSpeech: 'adverb', exampleSentence: 'Ich bin jetzt zu Hause.', exampleTranslation: 'Şimdi evdeyim.', category: 'time', level: 'A1' },
+  { id: 'time-16', german: 'immer', turkish: 'her zaman', article: null, partOfSpeech: 'adverb', exampleSentence: 'Er kommt immer pünktlich.', exampleTranslation: 'Her zaman zamanında gelir.', category: 'time', level: 'A1' },
+  { id: 'time-17', german: 'nie', turkish: 'hiçbir zaman', article: null, partOfSpeech: 'adverb', exampleSentence: 'Ich war nie in Japan.', exampleTranslation: 'Hiçbir zaman Japonya\'da bulunmadım.', category: 'time', level: 'A1' },
+  { id: 'time-18', german: 'manchmal', turkish: 'bazen', article: null, partOfSpeech: 'adverb', exampleSentence: 'Manchmal gehe ich joggen.', exampleTranslation: 'Bazen koşuya çıkarım.', category: 'time', level: 'A1' },
+  { id: 'time-19', german: 'oft', turkish: 'sık sık', article: null, partOfSpeech: 'adverb', exampleSentence: 'Ich gehe oft ins Kino.', exampleTranslation: 'Sık sık sinemaya giderim.', category: 'time', level: 'A1' },
+  { id: 'time-20', german: 'früh', turkish: 'erken', article: null, partOfSpeech: 'adjective', exampleSentence: 'Ich stehe früh auf.', exampleTranslation: 'Erken kalkarım.', category: 'time', level: 'A1' },
+];

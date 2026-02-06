@@ -1,0 +1,18 @@
+import { VocabularyWord } from '@/lib/types';
+export const workWords: VocabularyWord[] = [
+  { id: 'work-1', german: 'Arbeit', turkish: 'İş', article: 'die', partOfSpeech: 'noun', exampleSentence: 'Ich gehe zur Arbeit.', exampleTranslation: 'İşe gidiyorum.', category: 'work', level: 'A2' },
+  { id: 'work-2', german: 'Beruf', turkish: 'Meslek', article: 'der', partOfSpeech: 'noun', plural: 'Berufe', exampleSentence: 'Was ist Ihr Beruf?', exampleTranslation: 'Mesleğiniz ne?', category: 'work', level: 'A2' },
+  { id: 'work-3', german: 'Büro', turkish: 'Ofis', article: 'das', partOfSpeech: 'noun', plural: 'Büros', exampleSentence: 'Ich arbeite im Büro.', exampleTranslation: 'Ofiste çalışıyorum.', category: 'work', level: 'A2' },
+  { id: 'work-4', german: 'Chef', turkish: 'Patron/Şef', article: 'der', partOfSpeech: 'noun', plural: 'Chefs', exampleSentence: 'Mein Chef ist sehr nett.', exampleTranslation: 'Patronum çok iyi.', category: 'work', level: 'A2' },
+  { id: 'work-5', german: 'Gehalt', turkish: 'Maaş', article: 'das', partOfSpeech: 'noun', plural: 'Gehälter', exampleSentence: 'Das Gehalt kommt am Monatsende.', exampleTranslation: 'Maaş ay sonunda gelir.', category: 'work', level: 'A2' },
+  { id: 'work-6', german: 'Arzt', turkish: 'Doktor', article: 'der', partOfSpeech: 'noun', plural: 'Ärzte', exampleSentence: 'Mein Bruder ist Arzt.', exampleTranslation: 'Erkek kardeşim doktor.', category: 'work', level: 'A2' },
+  { id: 'work-7', german: 'Lehrer', turkish: 'Öğretmen', article: 'der', partOfSpeech: 'noun', plural: 'Lehrer', exampleSentence: 'Die Lehrerin erklärt die Grammatik.', exampleTranslation: 'Öğretmen grameri açıklıyor.', category: 'work', level: 'A2' },
+  { id: 'work-8', german: 'arbeiten', turkish: 'çalışmak', article: null, partOfSpeech: 'verb', exampleSentence: 'Ich arbeite von Montag bis Freitag.', exampleTranslation: 'Pazartesiden Cumaya çalışıyorum.', category: 'work', level: 'A2' },
+  { id: 'work-9', german: 'Firma', turkish: 'Şirket', article: 'die', partOfSpeech: 'noun', plural: 'Firmen', exampleSentence: 'Die Firma hat 200 Mitarbeiter.', exampleTranslation: 'Şirketin 200 çalışanı var.', category: 'work', level: 'A2' },
+  { id: 'work-10', german: 'Termin', turkish: 'Randevu', article: 'der', partOfSpeech: 'noun', plural: 'Termine', exampleSentence: 'Ich habe einen Termin um 14 Uhr.', exampleTranslation: 'Saat 14\'te randevum var.', category: 'work', level: 'A2' },
+  { id: 'work-11', german: 'Ingenieur', turkish: 'Mühendis', article: 'der', partOfSpeech: 'noun', plural: 'Ingenieure', exampleSentence: 'Er arbeitet als Ingenieur.', exampleTranslation: 'Mühendis olarak çalışıyor.', category: 'work', level: 'A2' },
+  { id: 'work-12', german: 'Bewerbung', turkish: 'Başvuru', article: 'die', partOfSpeech: 'noun', plural: 'Bewerbungen', exampleSentence: 'Ich schreibe eine Bewerbung.', exampleTranslation: 'Bir başvuru yazıyorum.', category: 'work', level: 'A2' },
+  { id: 'work-13', german: 'Erfahrung', turkish: 'Deneyim', article: 'die', partOfSpeech: 'noun', plural: 'Erfahrungen', exampleSentence: 'Haben Sie Erfahrung?', exampleTranslation: 'Deneyiminiz var mı?', category: 'work', level: 'A2' },
+  { id: 'work-14', german: 'Kollege', turkish: 'İş arkadaşı', article: 'der', partOfSpeech: 'noun', plural: 'Kollegen', exampleSentence: 'Mein Kollege hilft mir.', exampleTranslation: 'İş arkadaşım bana yardım ediyor.', category: 'work', level: 'A2' },
+  { id: 'work-15', german: 'Projekt', turkish: 'Proje', article: 'das', partOfSpeech: 'noun', plural: 'Projekte', exampleSentence: 'Das Projekt ist fast fertig.', exampleTranslation: 'Proje neredeyse bitti.', category: 'work', level: 'A2' },
+];

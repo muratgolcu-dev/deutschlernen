@@ -1,0 +1,18 @@
+import { VocabularyWord } from '@/lib/types';
+export const travelWords: VocabularyWord[] = [
+  { id: 'travel-1', german: 'Flugzeug', turkish: 'Uçak', article: 'das', partOfSpeech: 'noun', plural: 'Flugzeuge', exampleSentence: 'Das Flugzeug fliegt nach Berlin.', exampleTranslation: 'Uçak Berlin\'e uçuyor.', category: 'travel', level: 'A2' },
+  { id: 'travel-2', german: 'Zug', turkish: 'Tren', article: 'der', partOfSpeech: 'noun', plural: 'Züge', exampleSentence: 'Der Zug kommt um 10 Uhr.', exampleTranslation: 'Tren saat 10\'da geliyor.', category: 'travel', level: 'A2' },
+  { id: 'travel-3', german: 'Bus', turkish: 'Otobüs', article: 'der', partOfSpeech: 'noun', plural: 'Busse', exampleSentence: 'Ich fahre mit dem Bus zur Arbeit.', exampleTranslation: 'İşe otobüsle gidiyorum.', category: 'travel', level: 'A2' },
+  { id: 'travel-4', german: 'Bahnhof', turkish: 'Tren istasyonu', article: 'der', partOfSpeech: 'noun', plural: 'Bahnhöfe', exampleSentence: 'Der Bahnhof ist in der Stadtmitte.', exampleTranslation: 'Tren istasyonu şehir merkezinde.', category: 'travel', level: 'A2' },
+  { id: 'travel-5', german: 'Flughafen', turkish: 'Havalimanı', article: 'der', partOfSpeech: 'noun', plural: 'Flughäfen', exampleSentence: 'Wir fahren zum Flughafen.', exampleTranslation: 'Havalimanına gidiyoruz.', category: 'travel', level: 'A2' },
+  { id: 'travel-6', german: 'Fahrkarte', turkish: 'Bilet', article: 'die', partOfSpeech: 'noun', plural: 'Fahrkarten', exampleSentence: 'Ich brauche eine Fahrkarte nach Hamburg.', exampleTranslation: 'Hamburg\'a bir bilet lazım.', category: 'travel', level: 'A2' },
+  { id: 'travel-7', german: 'Koffer', turkish: 'Bavul', article: 'der', partOfSpeech: 'noun', plural: 'Koffer', exampleSentence: 'Mein Koffer ist sehr schwer.', exampleTranslation: 'Bavulum çok ağır.', category: 'travel', level: 'A2' },
+  { id: 'travel-8', german: 'Hotel', turkish: 'Otel', article: 'das', partOfSpeech: 'noun', plural: 'Hotels', exampleSentence: 'Das Hotel ist am Strand.', exampleTranslation: 'Otel sahilde.', category: 'travel', level: 'A2' },
+  { id: 'travel-9', german: 'Reisepass', turkish: 'Pasaport', article: 'der', partOfSpeech: 'noun', plural: 'Reisepässe', exampleSentence: 'Haben Sie Ihren Reisepass?', exampleTranslation: 'Pasaportunuz var mı?', category: 'travel', level: 'A2' },
+  { id: 'travel-10', german: 'Urlaub', turkish: 'Tatil', article: 'der', partOfSpeech: 'noun', plural: 'Urlaube', exampleSentence: 'Im Sommer machen wir Urlaub.', exampleTranslation: 'Yazın tatil yapıyoruz.', category: 'travel', level: 'A2' },
+  { id: 'travel-11', german: 'Straße', turkish: 'Sokak/Cadde', article: 'die', partOfSpeech: 'noun', plural: 'Straßen', exampleSentence: 'Die Straße ist sehr lang.', exampleTranslation: 'Cadde çok uzun.', category: 'travel', level: 'A2' },
+  { id: 'travel-12', german: 'links', turkish: 'sol', article: null, partOfSpeech: 'adverb', exampleSentence: 'Gehen Sie links!', exampleTranslation: 'Sola gidin!', category: 'travel', level: 'A2' },
+  { id: 'travel-13', german: 'rechts', turkish: 'sağ', article: null, partOfSpeech: 'adverb', exampleSentence: 'Die Bank ist rechts.', exampleTranslation: 'Banka sağda.', category: 'travel', level: 'A2' },
+  { id: 'travel-14', german: 'geradeaus', turkish: 'düz/ileri', article: null, partOfSpeech: 'adverb', exampleSentence: 'Gehen Sie geradeaus!', exampleTranslation: 'Düz gidin!', category: 'travel', level: 'A2' },
+  { id: 'travel-15', german: 'Meer', turkish: 'Deniz', article: 'das', partOfSpeech: 'noun', plural: 'Meere', exampleSentence: 'Das Meer ist blau und warm.', exampleTranslation: 'Deniz mavi ve sıcak.', category: 'travel', level: 'A2' },
+];

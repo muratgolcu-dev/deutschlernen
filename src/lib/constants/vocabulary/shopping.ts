@@ -1,0 +1,18 @@
+import { VocabularyWord } from '@/lib/types';
+export const shoppingWords: VocabularyWord[] = [
+  { id: 'shopping-1', german: 'Geschäft', turkish: 'Dükkan/Mağaza', article: 'das', partOfSpeech: 'noun', plural: 'Geschäfte', exampleSentence: 'Das Geschäft öffnet um 9 Uhr.', exampleTranslation: 'Mağaza saat 9\'da açılır.', category: 'shopping', level: 'A2' },
+  { id: 'shopping-2', german: 'Supermarkt', turkish: 'Süpermarket', article: 'der', partOfSpeech: 'noun', plural: 'Supermärkte', exampleSentence: 'Ich gehe zum Supermarkt.', exampleTranslation: 'Süpermarkete gidiyorum.', category: 'shopping', level: 'A2' },
+  { id: 'shopping-3', german: 'Preis', turkish: 'Fiyat', article: 'der', partOfSpeech: 'noun', plural: 'Preise', exampleSentence: 'Was ist der Preis?', exampleTranslation: 'Fiyat ne?', category: 'shopping', level: 'A2' },
+  { id: 'shopping-4', german: 'Geld', turkish: 'Para', article: 'das', partOfSpeech: 'noun', exampleSentence: 'Ich habe kein Geld dabei.', exampleTranslation: 'Yanımda param yok.', category: 'shopping', level: 'A2' },
+  { id: 'shopping-5', german: 'teuer', turkish: 'pahalı', article: null, partOfSpeech: 'adjective', exampleSentence: 'Das ist zu teuer.', exampleTranslation: 'Bu çok pahalı.', category: 'shopping', level: 'A2' },
+  { id: 'shopping-6', german: 'billig', turkish: 'ucuz', article: null, partOfSpeech: 'adjective', exampleSentence: 'Hier ist alles billig.', exampleTranslation: 'Burada her şey ucuz.', category: 'shopping', level: 'A2' },
+  { id: 'shopping-7', german: 'kaufen', turkish: 'satın almak', article: null, partOfSpeech: 'verb', exampleSentence: 'Ich möchte ein Buch kaufen.', exampleTranslation: 'Bir kitap almak istiyorum.', category: 'shopping', level: 'A2' },
+  { id: 'shopping-8', german: 'bezahlen', turkish: 'ödemek', article: null, partOfSpeech: 'verb', exampleSentence: 'Kann ich mit Karte bezahlen?', exampleTranslation: 'Kartla ödeyebilir miyim?', category: 'shopping', level: 'A2' },
+  { id: 'shopping-9', german: 'Kleidung', turkish: 'Giysi/Kıyafet', article: 'die', partOfSpeech: 'noun', exampleSentence: 'Ich brauche neue Kleidung.', exampleTranslation: 'Yeni kıyafetlere ihtiyacım var.', category: 'shopping', level: 'A2' },
+  { id: 'shopping-10', german: 'Größe', turkish: 'Beden', article: 'die', partOfSpeech: 'noun', plural: 'Größen', exampleSentence: 'Welche Größe haben Sie?', exampleTranslation: 'Bedeniniz ne?', category: 'shopping', level: 'A2' },
+  { id: 'shopping-11', german: 'Kasse', turkish: 'Kasa', article: 'die', partOfSpeech: 'noun', plural: 'Kassen', exampleSentence: 'Bitte gehen Sie zur Kasse.', exampleTranslation: 'Lütfen kasaya gidin.', category: 'shopping', level: 'A2' },
+  { id: 'shopping-12', german: 'Angebot', turkish: 'İndirim/Teklif', article: 'das', partOfSpeech: 'noun', plural: 'Angebote', exampleSentence: 'Das Angebot ist sehr gut.', exampleTranslation: 'İndirim çok iyi.', category: 'shopping', level: 'A2' },
+  { id: 'shopping-13', german: 'Schuhe', turkish: 'Ayakkabılar', article: 'die (pl)', partOfSpeech: 'noun', exampleSentence: 'Die Schuhe sind schön.', exampleTranslation: 'Ayakkabılar güzel.', category: 'shopping', level: 'A2' },
+  { id: 'shopping-14', german: 'Tasche', turkish: 'Çanta', article: 'die', partOfSpeech: 'noun', plural: 'Taschen', exampleSentence: 'Die Tasche kostet 50 Euro.', exampleTranslation: 'Çanta 50 Euro.', category: 'shopping', level: 'A2' },
+  { id: 'shopping-15', german: 'Euro', turkish: 'Euro', article: 'der', partOfSpeech: 'noun', exampleSentence: 'Das kostet fünf Euro.', exampleTranslation: 'Bu beş Euro tutuyor.', category: 'shopping', level: 'A2' },
+];
