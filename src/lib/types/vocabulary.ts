@@ -11,6 +11,10 @@ export interface VocabularyWord {
   article: Article;
   plural?: string;
   partOfSpeech: PartOfSpeech;
+  synonyms?: string[];
+  antonyms?: string[];
+  collocations?: string[];
+  emoji?: string;
   exampleSentence: string;
   exampleTranslation: string;
   category: string;

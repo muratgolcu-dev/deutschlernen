@@ -60,18 +60,48 @@ export default function VocabularyPage() {
         </div>
         <Progress value={((currentIndex + 1) / reviewWords.length) * 100} className="h-2" />
 
-        <Card className="min-h-[300px]" onClick={() => !showAnswer && setShowAnswer(true)}>
-          <CardContent className="flex flex-col items-center justify-center p-8 text-center min-h-[300px]">
+        <Card className="min-h-[340px]" onClick={() => !showAnswer && setShowAnswer(true)}>
+          <CardContent className="flex flex-col items-center justify-center p-8 text-center min-h-[340px]">
+            {currentWord.emoji && (
+              <span className="text-5xl mb-3">{currentWord.emoji}</span>
+            )}
             <p className="text-sm text-muted-foreground mb-2">{currentWord.partOfSpeech}</p>
-            <p className="text-3xl font-bold mb-2">
+            <p className="text-3xl font-bold mb-1">
               {currentWord.article ? `${currentWord.article} ` : ''}{currentWord.german}
             </p>
+            {currentWord.plural && (
+              <p className="text-sm text-muted-foreground mb-1">Çoğul: <span className="font-medium">die {currentWord.plural}</span></p>
+            )}
             <Button variant="ghost" size="sm" className="mb-4" onClick={(e) => { e.stopPropagation(); speak(currentWord.german); }}>
               <Volume2 className="h-4 w-4" />
             </Button>
             {showAnswer ? (
-              <div className="space-y-3">
+              <div className="space-y-3 w-full">
                 <p className="text-xl text-primary">{currentWord.turkish}</p>
+                {currentWord.synonyms && currentWord.synonyms.length > 0 && (
+                  <div className="flex flex-wrap justify-center gap-1.5">
+                    <span className="text-xs text-muted-foreground">Eş:</span>
+                    {currentWord.synonyms.map((s) => (
+                      <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>
+                    ))}
+                  </div>
+                )}
+                {currentWord.antonyms && currentWord.antonyms.length > 0 && (
+                  <div className="flex flex-wrap justify-center gap-1.5">
+                    <span className="text-xs text-muted-foreground">Zıt:</span>
+                    {currentWord.antonyms.map((a) => (
+                      <Badge key={a} variant="outline" className="text-xs">{a}</Badge>
+                    ))}
+                  </div>
+                )}
+                {currentWord.collocations && currentWord.collocations.length > 0 && (
+                  <div className="rounded-md bg-muted/50 p-2">
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Kullanım Kalıpları</p>
+                    {currentWord.collocations.map((c) => (
+                      <p key={c} className="text-xs text-muted-foreground">• {c}</p>
+                    ))}
+                  </div>
+                )}
                 <p className="text-sm italic text-muted-foreground">{currentWord.exampleSentence}</p>
                 <p className="text-xs text-muted-foreground">{currentWord.exampleTranslation}</p>
               </div>
