@@ -6,18 +6,22 @@ export interface GrammarLesson {
   id: string;
   title: string;
   turkishTitle: string;
+  englishTitle?: string;
   level: CEFRLevel;
   order: number;
   description?: string;
   explanation: string;
+  explanationEn?: string;
   examples: GrammarExample[];
   exercises: GrammarExercise[];
   tips: string[];
+  tipsEn?: string[];
 }
 
 export interface GrammarExample {
   german: string;
   turkish: string;
+  english?: string;
   highlight?: string;
 }
 

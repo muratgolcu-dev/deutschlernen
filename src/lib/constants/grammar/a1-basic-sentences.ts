@@ -4,6 +4,7 @@ export const a1BasicSentences: GrammarLesson = {
   id: 'a1-basic-sentences',
   title: 'Einfache Sätze',
   turkishTitle: 'Temel Cümleler',
+  englishTitle: 'Basic Sentences',
   level: 'A1',
   order: 4,
   explanation: `# Temel Cümle Yapısı
@@ -40,11 +41,45 @@ Soru kelimesi + fiil:
 "**kein/keine**" belirsiz artikel yerine kullanılır:
 - Ich habe **kein** Auto. (Arabam yok.)
 - Ich habe **keine** Zeit. (Zamanım yok.)`,
+  explanationEn: `# Basic Sentence Structure
+
+## Declarative Sentence (Aussagesatz)
+In German, the verb **always comes in second position**.
+
+**Subject + Verb + Other elements**
+
+- Ich **lerne** Deutsch. (I am learning German.)
+- Der Mann **kauft** Brot. (The man is buying bread.)
+
+## Question Sentence (Fragesatz)
+
+### Yes/No Questions
+The verb comes in **first position**:
+- **Lernst** du Deutsch? (Are you learning German?)
+- **Ist** er Student? (Is he a student?)
+
+### W-Questions
+Question word + verb:
+- **Wo** wohnst du? (Where do you live?)
+- **Was** machst du? (What are you doing?)
+- **Wie** heißt du? (What is your name?)
+- **Wann** kommst du? (When are you coming?)
+- **Warum** lernst du Deutsch? (Why are you learning German?)
+- **Wer** ist das? (Who is that?)
+
+## Negative Sentences
+"**nicht**" comes after the verb or at the end of the sentence:
+- Ich spreche **nicht** Französisch.
+- Das ist **nicht** richtig.
+
+"**kein/keine**" is used instead of the indefinite article:
+- Ich habe **kein** Auto. (I don't have a car.)
+- Ich habe **keine** Zeit. (I don't have time.)`,
   examples: [
-    { german: 'Ich komme aus der Türkei.', turkish: "Türkiye'den geliyorum." },
-    { german: 'Wo wohnst du?', turkish: 'Nerede oturuyorsun?' },
-    { german: 'Ich spreche nicht gut Deutsch.', turkish: 'İyi Almanca konuşmuyorum.' },
-    { german: 'Hast du ein Handy?', turkish: 'Cep telefonun var mı?' },
+    { german: 'Ich komme aus der Türkei.', turkish: "Türkiye'den geliyorum.", english: 'I come from Turkey.' },
+    { german: 'Wo wohnst du?', turkish: 'Nerede oturuyorsun?', english: 'Where do you live?' },
+    { german: 'Ich spreche nicht gut Deutsch.', turkish: 'İyi Almanca konuşmuyorum.', english: 'I don\'t speak German well.' },
+    { german: 'Hast du ein Handy?', turkish: 'Cep telefonun var mı?', english: 'Do you have a mobile phone?' },
   ],
   exercises: [
     {
@@ -102,5 +137,10 @@ Soru kelimesi + fiil:
     'Almanca\'da fiil HER ZAMAN ikinci sıradadır (düz cümlede).',
     'Evet/Hayır sorularında fiil en başa gelir.',
     'kein = ein\'in olumsuz hali, nicht = genel olumsuzluk.',
+  ],
+  tipsEn: [
+    'In German, the verb is ALWAYS in second position (in declarative sentences).',
+    'In yes/no questions, the verb comes first.',
+    'kein = negative form of ein, nicht = general negation.',
   ],
 };

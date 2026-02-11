@@ -5,6 +5,7 @@ import { vocabularyCategories, getWordById } from '@/lib/constants/vocabulary';
 import { useDeutschStore } from '@/lib/store/useDeutschStore';
 import { useSpacedRepetition } from '@/hooks/useSpacedRepetition';
 import { useSpeech } from '@/hooks/useSpeech';
+import { useLanguage } from '@/hooks/useLanguage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +24,7 @@ export default function VocabularyPage() {
   const { recordReview, wordProgress } = useDeutschStore();
   const { dueWords, newWords, stats } = useSpacedRepetition(selectedCategory ?? undefined);
   const { speak } = useSpeech();
+  const { t, lang, getTranslation, getExampleTranslation } = useLanguage();
 
   const startReview = useCallback((category: string) => {
     setSelectedCategory(category);
@@ -54,7 +56,7 @@ export default function VocabularyPage() {
       <div className="mx-auto max-w-lg space-y-4 p-4 md:p-8">
         <div className="flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={() => setView('categories')}>
-            <ArrowLeft className="mr-1 h-4 w-4" /> Geri
+            <ArrowLeft className="mr-1 h-4 w-4" /> {t('vocab.back')}
           </Button>
           <span className="text-sm text-muted-foreground">{currentIndex + 1}/{reviewWords.length}</span>
         </div>
@@ -70,17 +72,17 @@ export default function VocabularyPage() {
               {currentWord.article ? `${currentWord.article} ` : ''}{currentWord.german}
             </p>
             {currentWord.plural && (
-              <p className="text-sm text-muted-foreground mb-1">Çoğul: <span className="font-medium">die {currentWord.plural}</span></p>
+              <p className="text-sm text-muted-foreground mb-1">{t('vocab.plural')}: <span className="font-medium">die {currentWord.plural}</span></p>
             )}
             <Button variant="ghost" size="sm" className="mb-4" onClick={(e) => { e.stopPropagation(); speak(currentWord.german); }}>
               <Volume2 className="h-4 w-4" />
             </Button>
             {showAnswer ? (
               <div className="space-y-3 w-full">
-                <p className="text-xl text-primary">{currentWord.turkish}</p>
+                <p className="text-xl text-primary">{getTranslation(currentWord)}</p>
                 {currentWord.synonyms && currentWord.synonyms.length > 0 && (
                   <div className="flex flex-wrap justify-center gap-1.5">
-                    <span className="text-xs text-muted-foreground">Eş:</span>
+                    <span className="text-xs text-muted-foreground">{t('vocab.synonyms')}:</span>
                     {currentWord.synonyms.map((s) => (
                       <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>
                     ))}
@@ -88,7 +90,7 @@ export default function VocabularyPage() {
                 )}
                 {currentWord.antonyms && currentWord.antonyms.length > 0 && (
                   <div className="flex flex-wrap justify-center gap-1.5">
-                    <span className="text-xs text-muted-foreground">Zıt:</span>
+                    <span className="text-xs text-muted-foreground">{t('vocab.antonyms')}:</span>
                     {currentWord.antonyms.map((a) => (
                       <Badge key={a} variant="outline" className="text-xs">{a}</Badge>
                     ))}
@@ -96,17 +98,17 @@ export default function VocabularyPage() {
                 )}
                 {currentWord.collocations && currentWord.collocations.length > 0 && (
                   <div className="rounded-md bg-muted/50 p-2">
-                    <p className="text-xs font-medium text-muted-foreground mb-1">Kullanım Kalıpları</p>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">{t('vocab.collocations')}</p>
                     {currentWord.collocations.map((c) => (
                       <p key={c} className="text-xs text-muted-foreground">• {c}</p>
                     ))}
                   </div>
                 )}
                 <p className="text-sm italic text-muted-foreground">{currentWord.exampleSentence}</p>
-                <p className="text-xs text-muted-foreground">{currentWord.exampleTranslation}</p>
+                <p className="text-xs text-muted-foreground">{getExampleTranslation(currentWord)}</p>
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">Cevabı görmek için dokun</p>
+              <p className="text-sm text-muted-foreground">{t('vocab.tapToReveal')}</p>
             )}
           </CardContent>
         </Card>
@@ -114,13 +116,13 @@ export default function VocabularyPage() {
         {showAnswer && (
           <div className="grid grid-cols-3 gap-2">
             <Button variant="destructive" onClick={() => handleRate(1)} className="flex-col py-3 h-auto">
-              <span className="text-xs">Zor</span>
+              <span className="text-xs">{t('vocab.hard')}</span>
             </Button>
             <Button variant="secondary" onClick={() => handleRate(3)} className="flex-col py-3 h-auto">
-              <span className="text-xs">Orta</span>
+              <span className="text-xs">{t('vocab.medium')}</span>
             </Button>
             <Button onClick={() => handleRate(5)} className="flex-col py-3 h-auto bg-green-600 hover:bg-green-700">
-              <span className="text-xs">Kolay</span>
+              <span className="text-xs">{t('vocab.easy')}</span>
             </Button>
           </div>
         )}
@@ -130,31 +132,31 @@ export default function VocabularyPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
-      <h1 className="text-2xl font-bold">Kelime Hazinesi</h1>
+      <h1 className="text-2xl font-bold">{t('vocab.title')}</h1>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Card>
           <CardContent className="p-3 text-center">
             <p className="text-xl font-bold">{stats.total}</p>
-            <p className="text-xs text-muted-foreground">Toplam</p>
+            <p className="text-xs text-muted-foreground">{t('vocab.total')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-3 text-center">
             <p className="text-xl font-bold text-green-500">{stats.mastered}</p>
-            <p className="text-xs text-muted-foreground">Ustalaşılan</p>
+            <p className="text-xs text-muted-foreground">{t('dash.mastered')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-3 text-center">
             <p className="text-xl font-bold text-blue-500">{stats.learning}</p>
-            <p className="text-xs text-muted-foreground">Öğrenilen</p>
+            <p className="text-xs text-muted-foreground">{t('dash.learning')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-3 text-center">
             <p className="text-xl font-bold text-orange-500">{stats.dueToday}</p>
-            <p className="text-xs text-muted-foreground">Tekrar</p>
+            <p className="text-xs text-muted-foreground">{t('dash.review')}</p>
           </CardContent>
         </Card>
       </div>
@@ -168,7 +170,7 @@ export default function VocabularyPage() {
                 <span className="text-3xl">{cat.icon}</span>
                 <div className="flex-1">
                   <p className="font-medium">{cat.name}</p>
-                  <p className="text-sm text-muted-foreground">{cat.turkishName}</p>
+                  <p className="text-sm text-muted-foreground">{lang === 'en' ? (cat.englishName || cat.turkishName) : cat.turkishName}</p>
                   <div className="mt-2 flex items-center gap-2">
                     <Progress value={(learnedCount / cat.words.length) * 100} className="h-1.5 flex-1" />
                     <span className="text-xs text-muted-foreground">{learnedCount}/{cat.words.length}</span>

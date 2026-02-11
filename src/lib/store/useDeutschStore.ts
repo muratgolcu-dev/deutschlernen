@@ -83,6 +83,7 @@ interface DeutschState {
 }
 
 const defaultSettings: UserSettings = {
+  nativeLanguage: null,
   anthropicApiKey: '',
   currentLevel: 'A1',
   dailyWordGoal: 10,
