@@ -4,6 +4,7 @@ export const a1NumbersTime: GrammarLesson = {
   id: 'a1-numbers-time',
   title: 'Zahlen & Uhrzeit',
   turkishTitle: 'Sayılar ve Saat',
+  englishTitle: 'Numbers and Time',
   level: 'A1',
   order: 5,
   explanation: `# Sayılar ve Saat
@@ -36,11 +37,41 @@ export const a1NumbersTime: GrammarLesson = {
 - 2:45 = Es ist **Viertel vor drei**.
 
 **Önemli:** "halb drei" = 2:30 (3:30 değil! Türkçe'den farklı!)`,
+  explanationEn: `# Numbers and Time
+
+## Numbers (Zahlen)
+
+| Number | German | Number | German |
+|--------|--------|--------|--------|
+| 1 | eins | 11 | elf |
+| 2 | zwei | 12 | zwölf |
+| 3 | drei | 13 | dreizehn |
+| 4 | vier | 20 | zwanzig |
+| 5 | fünf | 21 | einundzwanzig |
+| 6 | sechs | 30 | dreißig |
+| 7 | sieben | 100 | hundert |
+| 8 | acht | 1000 | tausend |
+
+**Note:** For numbers 21-99, the ones digit is said first:
+- 24 = **vier**und**zwanzig** (four and twenty)
+
+## Asking and Telling Time
+
+### Formal Time
+- 14:30 = Es ist **vierzehn Uhr dreißig**.
+
+### Colloquial Speech
+- 2:00 = Es ist **zwei Uhr**.
+- 2:15 = Es ist **Viertel nach zwei**.
+- 2:30 = Es ist **halb drei** (warning: half three = 2:30!)
+- 2:45 = Es ist **Viertel vor drei**.
+
+**Important:** "halb drei" = 2:30 (not 3:30! Different from English "half past"!)`,
   examples: [
-    { german: 'Wie spät ist es?', turkish: 'Saat kaç?' },
-    { german: 'Es ist halb vier.', turkish: 'Saat üç buçuk.' },
-    { german: 'Ich bin fünfundzwanzig Jahre alt.', turkish: 'Yirmi beş yaşındayım.' },
-    { german: 'Der Zug kommt um Viertel nach sieben.', turkish: 'Tren yediyi çeyrek geçe geliyor.' },
+    { german: 'Wie spät ist es?', turkish: 'Saat kaç?', english: 'What time is it?' },
+    { german: 'Es ist halb vier.', turkish: 'Saat üç buçuk.', english: 'It is half past three.' },
+    { german: 'Ich bin fünfundzwanzig Jahre alt.', turkish: 'Yirmi beş yaşındayım.', english: 'I am twenty-five years old.' },
+    { german: 'Der Zug kommt um Viertel nach sieben.', turkish: 'Tren yediyi çeyrek geçe geliyor.', english: 'The train arrives at a quarter past seven.' },
   ],
   exercises: [
     {
@@ -88,5 +119,10 @@ export const a1NumbersTime: GrammarLesson = {
     '"halb" ifadesine dikkat: halb drei = 2:30 (Türkçe\'deki gibi değil!)',
     '21-99 arası sayılarda birler basamağı önce söylenir.',
     'Resmi saatte 24 saat sistemi kullanılır.',
+  ],
+  tipsEn: [
+    'Pay attention to "halb": halb drei = 2:30 (not 3:30 like in English "half past")!',
+    'For numbers 21-99, the ones digit is said first.',
+    'The 24-hour clock is used for official times.',
   ],
 };

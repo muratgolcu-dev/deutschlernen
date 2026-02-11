@@ -2,6 +2,7 @@
 
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useDeutschStore } from '@/lib/store/useDeutschStore';
+import { useLanguage } from '@/hooks/useLanguage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +14,7 @@ import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recha
 export default function Dashboard() {
   const { wordStats, streak, weeklyActivity, todayActivity, lessonsCompleted, totalLessons, xp, rank, level, dailyWordGoal } = useDashboardData();
   const { dailyChallenge, showLevelUp, dismissLevelUp } = useDeutschStore();
+  const { t, lang } = useLanguage();
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
@@ -22,19 +24,19 @@ export default function Dashboard() {
             <div className="flex items-center gap-3">
               <Trophy className="h-8 w-8 text-yellow-500" />
               <div>
-                <p className="font-bold">Tebrikler! Yeni seviye: {rank}</p>
-                <p className="text-sm text-muted-foreground">Harika ilerliyorsun!</p>
+                <p className="font-bold">{t('dash.congrats')}: {rank}</p>
+                <p className="text-sm text-muted-foreground">{t('dash.great')}</p>
               </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={dismissLevelUp}>Kapat</Button>
+            <Button variant="ghost" size="sm" onClick={dismissLevelUp}>{t('dash.close')}</Button>
           </CardContent>
         </Card>
       )}
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Merhaba!</h1>
-          <p className="text-muted-foreground">Seviye: {level} &middot; {rank}</p>
+          <h1 className="text-2xl font-bold">{t('dash.hello')}</h1>
+          <p className="text-muted-foreground">{t('dash.level')}: {level} &middot; {rank}</p>
         </div>
         <div className="flex items-center gap-2">
           <Flame className="h-5 w-5 text-orange-500" />
@@ -50,10 +52,10 @@ export default function Dashboard() {
           <CardContent className="p-4">
             <div className="flex items-center gap-3 mb-2">
               <Target className="h-5 w-5 text-primary" />
-              <span className="font-medium">Günlük Görev</span>
-              {dailyChallenge.completed && <Badge variant="secondary">Tamamlandı!</Badge>}
+              <span className="font-medium">{t('dash.dailyTask')}</span>
+              {dailyChallenge.completed && <Badge variant="secondary">{t('dash.completed')}</Badge>}
             </div>
-            <p className="text-sm text-muted-foreground mb-2">{dailyChallenge.turkishDescription}</p>
+            <p className="text-sm text-muted-foreground mb-2">{lang === 'tr' ? dailyChallenge.turkishDescription : dailyChallenge.description}</p>
             <Progress value={(dailyChallenge.progress / dailyChallenge.target) * 100} className="h-2" />
             <p className="mt-1 text-xs text-muted-foreground">{dailyChallenge.progress}/{dailyChallenge.target}</p>
           </CardContent>
@@ -65,25 +67,25 @@ export default function Dashboard() {
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold">{wordStats.mastered}</p>
-            <p className="text-xs text-muted-foreground">Ustalaşılan</p>
+            <p className="text-xs text-muted-foreground">{t('dash.mastered')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold">{wordStats.learning}</p>
-            <p className="text-xs text-muted-foreground">Öğrenilen</p>
+            <p className="text-xs text-muted-foreground">{t('dash.learning')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold">{wordStats.dueToday}</p>
-            <p className="text-xs text-muted-foreground">Bugün Tekrar</p>
+            <p className="text-xs text-muted-foreground">{t('dash.reviewToday')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold">{lessonsCompleted}/{totalLessons}</p>
-            <p className="text-xs text-muted-foreground">Dersler</p>
+            <p className="text-xs text-muted-foreground">{t('dash.lessons')}</p>
           </CardContent>
         </Card>
       </div>
@@ -91,12 +93,12 @@ export default function Dashboard() {
       {/* Today's Progress */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Bugünkü İlerleme</CardTitle>
+          <CardTitle className="text-base">{t('dash.todayProgress')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div>
             <div className="flex justify-between text-sm mb-1">
-              <span>Kelimeler</span>
+              <span>{t('dash.words')}</span>
               <span>{todayActivity?.wordsLearned ?? 0}/{dailyWordGoal}</span>
             </div>
             <Progress value={((todayActivity?.wordsLearned ?? 0) / dailyWordGoal) * 100} className="h-2" />
@@ -107,16 +109,16 @@ export default function Dashboard() {
       {/* Weekly Chart */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Haftalık Aktivite</CardTitle>
+          <CardTitle className="text-base">{t('dash.weeklyActivity')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-40">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={weeklyActivity}>
-                <XAxis dataKey="date" tickFormatter={(v) => new Date(v).toLocaleDateString('tr', { weekday: 'short' })} fontSize={12} />
+                <XAxis dataKey="date" tickFormatter={(v) => new Date(v).toLocaleDateString(lang === 'tr' ? 'tr' : 'en', { weekday: 'short' })} fontSize={12} />
                 <YAxis fontSize={12} />
-                <Tooltip labelFormatter={(v) => new Date(v).toLocaleDateString('tr')} />
-                <Bar dataKey="wordsReviewed" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="Tekrar" />
+                <Tooltip labelFormatter={(v) => new Date(v).toLocaleDateString(lang === 'tr' ? 'tr' : 'en')} />
+                <Bar dataKey="wordsReviewed" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name={t('dash.review')} />
                 <Bar dataKey="xpEarned" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="XP" />
               </BarChart>
             </ResponsiveContainer>
@@ -131,8 +133,8 @@ export default function Dashboard() {
             <CardContent className="flex items-center gap-3 p-4">
               <BookOpen className="h-8 w-8 text-blue-500" />
               <div>
-                <p className="font-medium">Kelime Çalış</p>
-                <p className="text-xs text-muted-foreground">{wordStats.dueToday} kelime bekliyor</p>
+                <p className="font-medium">{t('dash.studyWords')}</p>
+                <p className="text-xs text-muted-foreground">{wordStats.dueToday} {t('dash.wordsWaiting')}</p>
               </div>
             </CardContent>
           </Card>
@@ -142,8 +144,8 @@ export default function Dashboard() {
             <CardContent className="flex items-center gap-3 p-4">
               <GraduationCap className="h-8 w-8 text-green-500" />
               <div>
-                <p className="font-medium">Gramer Dersi</p>
-                <p className="text-xs text-muted-foreground">{totalLessons - lessonsCompleted} ders kaldı</p>
+                <p className="font-medium">{t('dash.grammarLesson')}</p>
+                <p className="text-xs text-muted-foreground">{totalLessons - lessonsCompleted} {t('dash.lessonsLeft')}</p>
               </div>
             </CardContent>
           </Card>
@@ -153,8 +155,8 @@ export default function Dashboard() {
             <CardContent className="flex items-center gap-3 p-4">
               <MessageCircle className="h-8 w-8 text-purple-500" />
               <div>
-                <p className="font-medium">Konuşma Pratiği</p>
-                <p className="text-xs text-muted-foreground">AI ile Almanca konuş</p>
+                <p className="font-medium">{t('dash.conversation')}</p>
+                <p className="text-xs text-muted-foreground">{t('dash.chatWithAI')}</p>
               </div>
             </CardContent>
           </Card>

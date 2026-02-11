@@ -4,6 +4,7 @@ export const a2Akkusativ: GrammarLesson = {
   id: 'a2-akkusativ',
   title: 'Akkusativ (Belirtme Hali)',
   turkishTitle: 'Akkusativ (Belirtme Hali / -i hali)',
+  englishTitle: 'Accusative Case',
   level: 'A2',
   order: 6,
   explanation: `# Akkusativ (-i Hali)
@@ -49,11 +50,54 @@ Akkusativ, cümledeki **doğrudan nesneyi** (belirtili nesne) ifade eder.
 | wir | **uns** |
 | ihr | **euch** |
 | sie/Sie | **sie/Sie** |`,
+  explanationEn: `# Accusative Case
+
+The accusative case marks the **direct object** in a sentence.
+
+## Article Changes
+
+| Nominative | Accusative | Change |
+|------------|------------|--------|
+| **der** Mann | **den** Mann | der -> den |
+| **die** Frau | **die** Frau | no change |
+| **das** Kind | **das** Kind | no change |
+| **die** Kinder | **die** Kinder | no change |
+
+**Only the masculine article changes!**
+
+## Indefinite Articles
+
+| Nominative | Accusative |
+|------------|------------|
+| **ein** Mann | **einen** Mann |
+| **eine** Frau | **eine** Frau |
+| **ein** Kind | **ein** Kind |
+
+## Verbs That Take the Accusative
+- **haben** (to have): Ich habe **einen** Hund.
+- **kaufen** (to buy): Er kauft **den** Computer.
+- **sehen** (to see): Sie sieht **den** Film.
+- **brauchen** (to need): Wir brauchen **einen** Tisch.
+- **essen** (to eat): Ich esse **einen** Apfel.
+- **trinken** (to drink): Er trinkt **den** Kaffee.
+
+## Personal Pronouns - Accusative
+
+| Nominative | Accusative |
+|------------|------------|
+| ich | **mich** |
+| du | **dich** |
+| er | **ihn** |
+| sie | **sie** |
+| es | **es** |
+| wir | **uns** |
+| ihr | **euch** |
+| sie/Sie | **sie/Sie** |`,
   examples: [
-    { german: 'Ich sehe den Mann.', turkish: 'Adamı görüyorum.' },
-    { german: 'Sie kauft einen Rock.', turkish: 'Bir etek satın alıyor.' },
-    { german: 'Hast du den Schlüssel?', turkish: 'Anahtarın var mı?' },
-    { german: 'Er liebt sie.', turkish: 'O onu seviyor.' },
+    { german: 'Ich sehe den Mann.', turkish: 'Adamı görüyorum.', english: 'I see the man.' },
+    { german: 'Sie kauft einen Rock.', turkish: 'Bir etek satın alıyor.', english: 'She is buying a skirt.' },
+    { german: 'Hast du den Schlüssel?', turkish: 'Anahtarın var mı?', english: 'Do you have the key?' },
+    { german: 'Er liebt sie.', turkish: 'O onu seviyor.', english: 'He loves her.' },
   ],
   exercises: [
     {
@@ -111,5 +155,10 @@ Akkusativ, cümledeki **doğrudan nesneyi** (belirtili nesne) ifade eder.
     'Sadece eril (maskulin) artikelde değişim olur: der → den, ein → einen.',
     'Dişil ve nötr artikeller Akkusativ\'de DEĞİŞMEZ.',
     'Bir fiilin Akkusativ gerektirip gerektirmediğini öğrenmek önemlidir.',
+  ],
+  tipsEn: [
+    'Only the masculine article changes: der -> den, ein -> einen.',
+    'Feminine and neuter articles DO NOT CHANGE in the accusative.',
+    'It is important to learn whether a verb requires the accusative case.',
   ],
 };

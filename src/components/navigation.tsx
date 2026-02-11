@@ -4,17 +4,19 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BookOpen, MessageCircle, GraduationCap, BarChart3, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const navItems = [
-  { href: '/', label: 'Dashboard', icon: BarChart3 },
-  { href: '/vocabulary', label: 'Kelimeler', icon: BookOpen },
-  { href: '/grammar', label: 'Gramer', icon: GraduationCap },
-  { href: '/chat', label: 'Sohbet', icon: MessageCircle },
-  { href: '/settings', label: 'Ayarlar', icon: Settings },
-];
+import { useLanguage } from '@/hooks/useLanguage';
 
 export function Navigation() {
   const pathname = usePathname();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { href: '/', label: t('nav.dashboard'), icon: BarChart3 },
+    { href: '/vocabulary', label: t('nav.vocabulary'), icon: BookOpen },
+    { href: '/grammar', label: t('nav.grammar'), icon: GraduationCap },
+    { href: '/chat', label: t('nav.chat'), icon: MessageCircle },
+    { href: '/settings', label: t('nav.settings'), icon: Settings },
+  ];
 
   return (
     <>

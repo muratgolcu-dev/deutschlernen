@@ -4,6 +4,7 @@ export const a2Prepositions: GrammarLesson = {
   id: 'a2-prepositions',
   title: 'Präpositionen',
   turkishTitle: 'Edatlar (Präpositionen)',
+  englishTitle: 'Prepositions',
   level: 'A2',
   order: 10,
   explanation: `# Edatlar (Präpositionen)
@@ -32,11 +33,37 @@ Hem Akkusativ hem Dativ alabilirler:
 - **Wo?** (Nerede?) → Dativ: Ich bin **in der** Schule.
 
 Değişken edatlar: **in, an, auf, über, unter, vor, hinter, neben, zwischen**`,
+  explanationEn: `# Prepositions (Präpositionen)
+
+In German, prepositions require specific cases (Kasus).
+
+## Accusative Prepositions (FUDGO)
+- **für** (for): Das ist für dich. (This is for you.)
+- **um** (around, at): um 8 Uhr (at 8 o'clock)
+- **durch** (through): durch die Stadt (through the city)
+- **gegen** (against): gegen die Wand (against the wall)
+- **ohne** (without): ohne mich (without me)
+
+## Dative Prepositions (MASB-VN)
+- **mit** (with): mit dem Bus (by bus)
+- **aus** (from, out of): aus der Türkei (from Turkey)
+- **seit** (since, for): seit zwei Jahren (for two years)
+- **bei** (at, near): bei mir (at my place)
+- **von** (from, of): von der Schule (from school)
+- **nach** (to, after): nach Berlin (to Berlin)
+- **zu** (to): zum Arzt (to the doctor)
+
+## Two-Way Prepositions (Wechselpräpositionen)
+These can take either accusative or dative:
+- **Wohin?** (Where to?) -> Accusative: Ich gehe **in die** Schule.
+- **Wo?** (Where?) -> Dative: Ich bin **in der** Schule.
+
+Two-way prepositions: **in, an, auf, über, unter, vor, hinter, neben, zwischen**`,
   examples: [
-    { german: 'Ich fahre mit dem Zug.', turkish: 'Trenle gidiyorum.' },
-    { german: 'Das Geschenk ist für dich.', turkish: 'Hediye senin için.' },
-    { german: 'Ich komme aus der Türkei.', turkish: "Türkiye'den geliyorum." },
-    { german: 'Er geht in die Schule.', turkish: 'Okula gidiyor.' },
+    { german: 'Ich fahre mit dem Zug.', turkish: 'Trenle gidiyorum.', english: 'I am going by train.' },
+    { german: 'Das Geschenk ist für dich.', turkish: 'Hediye senin için.', english: 'The gift is for you.' },
+    { german: 'Ich komme aus der Türkei.', turkish: "Türkiye'den geliyorum.", english: 'I come from Turkey.' },
+    { german: 'Er geht in die Schule.', turkish: 'Okula gidiyor.', english: 'He is going to school.' },
   ],
   exercises: [
     {
@@ -94,5 +121,10 @@ Değişken edatlar: **in, an, auf, über, unter, vor, hinter, neben, zwischen**`
     'FUDGO = für, um, durch, gegen, ohne → Akkusativ',
     'mit, aus, seit, bei, von, nach, zu → Dativ',
     'Değişken edatlarda: Wohin? (nereye) → Akk, Wo? (nerede) → Dat',
+  ],
+  tipsEn: [
+    'FUDGO = für, um, durch, gegen, ohne -> Accusative',
+    'mit, aus, seit, bei, von, nach, zu -> Dative',
+    'Two-way prepositions: Wohin? (where to?) -> Acc, Wo? (where?) -> Dat',
   ],
 };

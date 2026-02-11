@@ -4,6 +4,7 @@ export const a2ModalVerbs: GrammarLesson = {
   id: 'a2-modal-verbs',
   title: 'Modalverben',
   turkishTitle: 'Yardımcı Fiiller (Modal)',
+  englishTitle: 'Modal Verbs',
   level: 'A2',
   order: 8,
   explanation: `# Modalverben (Yardımcı Fiiller)
@@ -42,11 +43,47 @@ Modal fiil → 2. pozisyon, Ana fiil → cümle sonu (mastar)
 - Ich **muss** gehen. (Gitmem gerekiyor.)
 - Ich **muss nicht** gehen. (Gitmem gerekmiyor.) ← zorunluluk yok
 - Ich **darf nicht** gehen. (Gitmem yasak.) ← yasak!`,
+  explanationEn: `# Modal Verbs (Modalverben)
+
+Modal verbs modify the meaning of the main verb. The main verb stays in infinitive form at the end of the sentence.
+
+## 6 Modal Verbs
+
+| Modal | Meaning | Example |
+|-------|---------|---------|
+| **können** | can, to be able to | Ich **kann** schwimmen. |
+| **müssen** | must, to have to | Ich **muss** arbeiten. |
+| **wollen** | to want | Ich **will** essen. |
+| **sollen** | should, ought to | Du **sollst** lernen. |
+| **dürfen** | may, to be allowed to | Ich **darf** rauchen? |
+| **möchten** | would like (polite) | Ich **möchte** Kaffee. |
+
+## Conjugation: können
+
+| Person | Conjugation |
+|--------|-------------|
+| ich | **kann** |
+| du | **kannst** |
+| er/sie/es | **kann** |
+| wir | **können** |
+| ihr | **könnt** |
+| sie/Sie | **können** |
+
+## Sentence Structure
+Modal verb -> 2nd position, Main verb -> end of sentence (infinitive)
+
+**Ich kann gut Deutsch sprechen.**
+(I can speak German well.)
+
+## müssen vs. nicht müssen vs. nicht dürfen
+- Ich **muss** gehen. (I have to go.)
+- Ich **muss nicht** gehen. (I don't have to go.) <- no obligation
+- Ich **darf nicht** gehen. (I am not allowed to go.) <- forbidden!`,
   examples: [
-    { german: 'Kannst du mir helfen?', turkish: 'Bana yardım edebilir misin?' },
-    { german: 'Ich muss jetzt gehen.', turkish: 'Şimdi gitmem gerekiyor.' },
-    { german: 'Wir wollen Deutsch lernen.', turkish: 'Almanca öğrenmek istiyoruz.' },
-    { german: 'Darf ich hier rauchen?', turkish: 'Burada sigara içebilir miyim?' },
+    { german: 'Kannst du mir helfen?', turkish: 'Bana yardım edebilir misin?', english: 'Can you help me?' },
+    { german: 'Ich muss jetzt gehen.', turkish: 'Şimdi gitmem gerekiyor.', english: 'I have to go now.' },
+    { german: 'Wir wollen Deutsch lernen.', turkish: 'Almanca öğrenmek istiyoruz.', english: 'We want to learn German.' },
+    { german: 'Darf ich hier rauchen?', turkish: 'Burada sigara içebilir miyim?', english: 'Am I allowed to smoke here?' },
   ],
   exercises: [
     {
@@ -104,5 +141,10 @@ Modal fiil → 2. pozisyon, Ana fiil → cümle sonu (mastar)
     'Modal fiil 2. pozisyonda, ana fiil cümle sonunda mastar haliyle!',
     'nicht dürfen = yasak, nicht müssen = gerekmiyor (farklı!)',
     'möchten kibar istek ifadesidir, wollen daha doğrudan.',
+  ],
+  tipsEn: [
+    'Modal verb in 2nd position, main verb at the end of the sentence in infinitive form!',
+    'nicht dürfen = forbidden, nicht müssen = not necessary (different!)',
+    'möchten is a polite request, wollen is more direct.',
   ],
 };

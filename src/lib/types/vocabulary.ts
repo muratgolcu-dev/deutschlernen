@@ -8,6 +8,7 @@ export interface VocabularyWord {
   id: string;
   german: string;
   turkish: string;
+  english?: string;
   article: Article;
   plural?: string;
   partOfSpeech: PartOfSpeech;
@@ -17,6 +18,7 @@ export interface VocabularyWord {
   emoji?: string;
   exampleSentence: string;
   exampleTranslation: string;
+  exampleTranslationEn?: string;
   category: string;
   level: CEFRLevel;
   tags?: string[];
@@ -38,6 +40,7 @@ export interface VocabularyCategory {
   id: string;
   name: string;
   turkishName: string;
+  englishName?: string;
   icon: string;
   words: VocabularyWord[];
 }

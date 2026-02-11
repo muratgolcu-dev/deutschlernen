@@ -4,6 +4,7 @@ export const a1PresentTense: GrammarLesson = {
   id: 'a1-present-tense',
   title: 'Präsens: Geniş Zaman',
   turkishTitle: 'Şimdiki/Geniş Zaman',
+  englishTitle: 'Present Tense',
   level: 'A1',
   order: 2,
   explanation: `# Präsens (Şimdiki/Geniş Zaman)
@@ -33,11 +34,38 @@ ich **habe**, du **hast**, er **hat**, wir **haben**, ihr **habt**, sie **haben*
 
 ### werden (olmak/dönüşmek)
 ich **werde**, du **wirst**, er **wird**, wir **werden**, ihr **werdet**, sie **werden**`,
+  explanationEn: `# Präsens (Present Tense)
+
+In German, the present tense is formed by adding personal endings to the verb stem.
+
+## Regular Verbs - Conjugation Table
+
+**machen** (to do/make) - stem: **mach-**
+
+| Person | Ending | Example |
+|--------|--------|---------|
+| ich | -e | ich mach**e** |
+| du | -st | du mach**st** |
+| er/sie/es | -t | er mach**t** |
+| wir | -en | wir mach**en** |
+| ihr | -t | ihr mach**t** |
+| sie/Sie | -en | sie mach**en** |
+
+## Important Irregular Verbs
+
+### sein (to be)
+ich **bin**, du **bist**, er **ist**, wir **sind**, ihr **seid**, sie **sind**
+
+### haben (to have)
+ich **habe**, du **hast**, er **hat**, wir **haben**, ihr **habt**, sie **haben**
+
+### werden (to become)
+ich **werde**, du **wirst**, er **wird**, wir **werden**, ihr **werdet**, sie **werden**`,
   examples: [
-    { german: 'Ich lerne Deutsch.', turkish: 'Almanca öğreniyorum.' },
-    { german: 'Du spielst Fußball.', turkish: 'Futbol oynuyorsun.' },
-    { german: 'Er arbeitet in Berlin.', turkish: "Berlin'de çalışıyor." },
-    { german: 'Wir wohnen in München.', turkish: "Münih'te oturuyoruz." },
+    { german: 'Ich lerne Deutsch.', turkish: 'Almanca öğreniyorum.', english: 'I am learning German.' },
+    { german: 'Du spielst Fußball.', turkish: 'Futbol oynuyorsun.', english: 'You play football.' },
+    { german: 'Er arbeitet in Berlin.', turkish: "Berlin'de çalışıyor.", english: 'He works in Berlin.' },
+    { german: 'Wir wohnen in München.', turkish: "Münih'te oturuyoruz.", english: 'We live in Munich.' },
   ],
   exercises: [
     {
@@ -96,5 +124,11 @@ ich **werde**, du **wirst**, er **wird**, wir **werden**, ihr **werdet**, sie **
     'Du formu her zaman -st ile biter.',
     'Er/sie/es formu her zaman -t ile biter.',
     'sein, haben ve werden fiilleri tamamen düzensizdir - ezberleyin!',
+  ],
+  tipsEn: [
+    'To find the stem of regular verbs, remove the -en ending.',
+    'The du form always ends in -st.',
+    'The er/sie/es form always ends in -t.',
+    'The verbs sein, haben, and werden are completely irregular - memorize them!',
   ],
 };
