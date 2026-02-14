@@ -88,6 +88,8 @@ In the plural, all nouns take the article **die**.
       id: 'a1-art-1',
       type: 'multiple-choice',
       question: '___ Haus ist groß.',
+      explanation: '"Haus" nötr (Neutrum) bir isimdir → Artikel: das. Nötr isimlerde Nominativ hali "das" kullanılır. Örnek: das Haus, das Buch, das Kind.',
+      explanationEn: '"Haus" is a neuter noun → Article: das. In nominative case, neuter nouns use "das". Example: das Haus, das Buch, das Kind.',
       data: {
         options: ['Der', 'Die', 'Das', 'Ein'],
         correctIndex: 2,
@@ -98,6 +100,8 @@ In the plural, all nouns take the article **die**.
       id: 'a1-art-2',
       type: 'multiple-choice',
       question: '___ Frau trinkt Kaffee.',
+      explanation: '"Frau" dişil (Feminin) bir isimdir → Artikel: die. Dişil isimlerde Nominativ hali "die" kullanılır. Örnek: die Frau, die Lampe, die Tasche.',
+      explanationEn: '"Frau" is a feminine noun → Article: die. In nominative case, feminine nouns use "die". Example: die Frau, die Lampe, die Tasche.',
       data: {
         options: ['Der', 'Die', 'Das', 'Den'],
         correctIndex: 1,
@@ -108,6 +112,8 @@ In the plural, all nouns take the article **die**.
       id: 'a1-art-3',
       type: 'fill-in-the-blank',
       question: '___ Mann arbeitet.',
+      explanation: '"Mann" eril (Maskulin) bir isimdir → Artikel: der. Eril isimlerde Nominativ hali "der" kullanılır. Örnek: der Mann, der Tisch, der Computer.',
+      explanationEn: '"Mann" is a masculine noun → Article: der. In nominative case, masculine nouns use "der". Example: der Mann, der Tisch, der Computer.',
       data: {
         answer: 'Der',
         hint: 'Eril artikel',
@@ -118,6 +124,8 @@ In the plural, all nouns take the article **die**.
       id: 'a1-art-4',
       type: 'multiple-choice',
       question: '___ Zeitung ist interessant.',
+      explanation: '"Zeitung" -ung ile biter → Dişil (Feminin). Kural: -ung ile biten isimler genellikle dişildir ve "die" artikelini alır. Örnek: die Zeitung, die Wohnung, die Übung.',
+      explanationEn: '"Zeitung" ends in -ung → Feminine. Rule: Nouns ending in -ung are usually feminine and take "die". Example: die Zeitung, die Wohnung, die Übung.',
       data: {
         options: ['Der', 'Die', 'Das', 'Den'],
         correctIndex: 1,
@@ -128,6 +136,8 @@ In the plural, all nouns take the article **die**.
       id: 'a1-art-5',
       type: 'fill-in-the-blank',
       question: '___ Mädchen spielt im Garten.',
+      explanation: '"Mädchen" -chen ile biter → Nötr (Neutrum). Kural: -chen küçültme eki ile biten tüm isimler nötr olup "das" artikelini alır. Örnek: das Mädchen, das Brötchen, das Häuschen.',
+      explanationEn: '"Mädchen" ends in -chen → Neuter. Rule: All nouns with the diminutive suffix -chen are neuter and take "das". Example: das Mädchen, das Brötchen, das Häuschen.',
       data: {
         answer: 'Das',
         hint: '-chen ile biten isimler nötr',

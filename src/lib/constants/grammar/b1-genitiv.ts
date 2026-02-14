@@ -84,6 +84,8 @@ In spoken German, **von + Dative** is often used instead of genitive:
       id: 'b1-gn-1',
       type: 'fill-in-the-blank',
       question: 'Das ist das Haus ___ (der) Lehrer_.',
+      explanation: '"Lehrer" eril isimdir. Genitiv: der → des + -s eki. "des Lehrers" = öğretmenin.',
+      explanationEn: '"Lehrer" is masculine. Genitive: der → des + -s ending. "des Lehrers" = of the teacher.',
       data: {
         answer: 'des Lehrers',
         hint: 'Eril Genitiv: der → des + -s',
@@ -94,6 +96,8 @@ In spoken German, **von + Dative** is often used instead of genitive:
       id: 'b1-gn-2',
       type: 'multiple-choice',
       question: 'Die Farbe ___ Autos ist blau.',
+      explanation: '"Auto" nötr isimdir (das Auto). Genitiv: das → des + -s. "des Autos" = arabanın.',
+      explanationEn: '"Auto" is neuter (das Auto). Genitive: das → des + -s. "des Autos" = of the car.',
       data: {
         options: ['der', 'des', 'dem', 'den'],
         correctIndex: 1,
@@ -104,6 +108,8 @@ In spoken German, **von + Dative** is often used instead of genitive:
       id: 'b1-gn-3',
       type: 'fill-in-the-blank',
       question: 'Trotz ___ (das) Wetter__ gehen wir raus.',
+      explanation: '"trotz" Genitiv edatıdır. "Wetter" nötr → das → des + -s. "trotz des Wetters" = havaya rağmen.',
+      explanationEn: '"trotz" is a genitive preposition. "Wetter" is neuter → das → des + -s. "trotz des Wetters" = despite the weather.',
       data: {
         answer: 'des Wetters',
         hint: 'Nötr Genitiv: das → des + -s',
@@ -114,6 +120,8 @@ In spoken German, **von + Dative** is often used instead of genitive:
       id: 'b1-gn-4',
       type: 'multiple-choice',
       question: 'Die Mutter ___ Kinder ist nett.',
+      explanation: '"Kinder" çoğul isimdir. Çoğul Genitiv: die → der. "der Kinder" = çocukların.',
+      explanationEn: '"Kinder" is plural. Plural genitive: die → der. "der Kinder" = of the children.',
       data: {
         options: ['die', 'der', 'des', 'den'],
         correctIndex: 1,
