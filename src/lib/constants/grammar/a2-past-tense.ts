@@ -86,6 +86,8 @@ Verbs of movement and change of state: gehen, kommen, fahren, fliegen, laufen, s
       id: 'a2-pst-1',
       type: 'fill-in-the-blank',
       question: 'Ich ___ gestern viel gelernt. (haben)',
+      explanation: 'Perfekt yapısı: haben/sein + Partizip II. "ich" ile haben → "habe" olur.',
+      explanationEn: 'Perfekt structure: haben/sein + Partizip II. With "ich", haben conjugates to "habe".',
       data: {
         answer: 'habe',
         hint: 'ich + haben',
@@ -96,6 +98,8 @@ Verbs of movement and change of state: gehen, kommen, fahren, fliegen, laufen, s
       id: 'a2-pst-2',
       type: 'multiple-choice',
       question: 'Er ___ nach München gefahren.',
+      explanation: 'fahren bir hareket fiilidir, bu yüzden Perfekt\'te "sein" ile kullanılır: er ist gefahren.',
+      explanationEn: 'fahren is a verb of movement, so it uses "sein" in the Perfekt: er ist gefahren.',
       data: {
         options: ['hat', 'ist', 'habe', 'bin'],
         correctIndex: 1,
@@ -106,6 +110,8 @@ Verbs of movement and change of state: gehen, kommen, fahren, fliegen, laufen, s
       id: 'a2-pst-3',
       type: 'fill-in-the-blank',
       question: 'machen → ge___ (Partizip II)',
+      explanation: 'Düzenli fiillerde Partizip II: ge- + kök + -t. machen → gemacht.',
+      explanationEn: 'For regular verbs, Partizip II: ge- + stem + -t. machen → gemacht.',
       data: {
         answer: 'gemacht',
         hint: 'ge- + kök + -t',
@@ -116,6 +122,8 @@ Verbs of movement and change of state: gehen, kommen, fahren, fliegen, laufen, s
       id: 'a2-pst-4',
       type: 'multiple-choice',
       question: 'Partizip II: trinken → ?',
+      explanation: 'trinken düzensiz bir fiildir. Partizip II: ge- + değişmiş kök (trunk) + -en → getrunken.',
+      explanationEn: 'trinken is an irregular verb. Partizip II: ge- + changed stem (trunk) + -en → getrunken.',
       data: {
         options: ['getrinkt', 'getrunken', 'trinkt', 'getranken'],
         correctIndex: 1,
@@ -126,6 +134,8 @@ Verbs of movement and change of state: gehen, kommen, fahren, fliegen, laufen, s
       id: 'a2-pst-5',
       type: 'word-ordering',
       question: 'Cümleyi oluşturun:',
+      explanation: 'Perfekt cümle yapısı: Özne + haben/sein (2. pozisyon) + ... + Partizip II (sonda).',
+      explanationEn: 'Perfekt sentence structure: Subject + haben/sein (2nd position) + ... + Partizip II (at the end).',
       data: {
         words: ['habe', 'Ich', 'gekauft', 'ein Buch'],
         correctOrder: [1, 0, 3, 2],

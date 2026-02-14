@@ -104,6 +104,8 @@ The accusative case marks the **direct object** in a sentence.
       id: 'a2-ak-1',
       type: 'fill-in-the-blank',
       question: 'Ich kaufe ___ (der) Computer.',
+      explanation: 'Akkusativ hali: eril der → den olur. "den Computer" = bilgisayarı.',
+      explanationEn: 'Accusative case: masculine der → den. "den Computer" = the computer (accusative).',
       data: {
         answer: 'den',
         hint: 'Eril isimler Akkusativ\'de der → den olur',
@@ -114,6 +116,8 @@ The accusative case marks the **direct object** in a sentence.
       id: 'a2-ak-2',
       type: 'multiple-choice',
       question: 'Er trinkt ___ Kaffee.',
+      explanation: 'Kaffee eril bir isimdir. Akkusativ\'de der → den olur.',
+      explanationEn: 'Kaffee is a masculine noun. In the accusative, der → den.',
       data: {
         options: ['der', 'den', 'dem', 'des'],
         correctIndex: 1,
@@ -124,6 +128,8 @@ The accusative case marks the **direct object** in a sentence.
       id: 'a2-ak-3',
       type: 'fill-in-the-blank',
       question: 'Siehst du ___ (ich)?',
+      explanation: 'Kişi zamiri "ich" Akkusativ\'de "mich" olur. sehen fiili Akkusativ gerektirir.',
+      explanationEn: 'The personal pronoun "ich" becomes "mich" in the accusative. The verb sehen requires the accusative.',
       data: {
         answer: 'mich',
         hint: 'ich zamirinin Akkusativ hali',
@@ -134,6 +140,8 @@ The accusative case marks the **direct object** in a sentence.
       id: 'a2-ak-4',
       type: 'multiple-choice',
       question: 'Ich brauche ___ Tasche.',
+      explanation: 'Tasche dişil bir isimdir. Dişil isimlerde Akkusativ\'de artikel değişmez: eine kalır.',
+      explanationEn: 'Tasche is a feminine noun. Feminine articles do not change in the accusative: eine stays eine.',
       data: {
         options: ['einen', 'eine', 'ein', 'einer'],
         correctIndex: 1,
@@ -144,6 +152,8 @@ The accusative case marks the **direct object** in a sentence.
       id: 'a2-ak-5',
       type: 'fill-in-the-blank',
       question: 'Wir sehen ___ (ein) Film.',
+      explanation: 'Film eril bir isimdir. Akkusativ\'de ein → einen olur.',
+      explanationEn: 'Film is a masculine noun. In the accusative, ein → einen.',
       data: {
         answer: 'einen',
         hint: 'Film erildir, ein → einen',

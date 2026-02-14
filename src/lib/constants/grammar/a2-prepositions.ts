@@ -70,6 +70,8 @@ Two-way prepositions: **in, an, auf, über, unter, vor, hinter, neben, zwischen*
       id: 'a2-pp-1',
       type: 'multiple-choice',
       question: 'Ich fahre ___ dem Bus.',
+      explanation: '"ile" anlamında "mit" edatı kullanılır. mit Dativ gerektirir: dem Bus.',
+      explanationEn: 'The preposition "mit" (with/by) is used here. mit requires the dative: dem Bus.',
       data: {
         options: ['mit', 'für', 'ohne', 'gegen'],
         correctIndex: 0,
@@ -80,6 +82,8 @@ Two-way prepositions: **in, an, auf, über, unter, vor, hinter, neben, zwischen*
       id: 'a2-pp-2',
       type: 'fill-in-the-blank',
       question: 'Das ist ___ (für/mit) meine Mutter.',
+      explanation: '"için" anlamında "für" edatı kullanılır. für Akkusativ gerektirir.',
+      explanationEn: 'The preposition "für" (for) is used here. für requires the accusative.',
       data: {
         answer: 'für',
         hint: '"için" anlamında',
@@ -90,6 +94,8 @@ Two-way prepositions: **in, an, auf, über, unter, vor, hinter, neben, zwischen*
       id: 'a2-pp-3',
       type: 'multiple-choice',
       question: 'Ich komme ___ der Türkei.',
+      explanation: 'Bir ülkeden gelmek için "aus" edatı kullanılır. aus Dativ gerektirir: aus der Türkei.',
+      explanationEn: 'The preposition "aus" (from) is used for coming from a country. aus requires the dative: aus der Türkei.',
       data: {
         options: ['von', 'aus', 'nach', 'zu'],
         correctIndex: 1,
@@ -100,6 +106,8 @@ Two-way prepositions: **in, an, auf, über, unter, vor, hinter, neben, zwischen*
       id: 'a2-pp-4',
       type: 'multiple-choice',
       question: 'Er geht in ___ Schule. (okula gidiyor - hareket)',
+      explanation: 'Wohin? (nereye) sorusu → Akkusativ. Schule dişildir, Akkusativ\'de die değişmez: in die Schule.',
+      explanationEn: 'Wohin? (where to?) question → Accusative. Schule is feminine, die stays unchanged in the accusative: in die Schule.',
       data: {
         options: ['der', 'die', 'dem', 'den'],
         correctIndex: 1,
@@ -110,6 +118,8 @@ Two-way prepositions: **in, an, auf, über, unter, vor, hinter, neben, zwischen*
       id: 'a2-pp-5',
       type: 'fill-in-the-blank',
       question: 'Ich warte ___ (seit/für) drei Stunden.',
+      explanation: '"den beri" anlamında "seit" edatı kullanılır. seit Dativ gerektirir ve süre bildirir.',
+      explanationEn: 'The preposition "seit" (since/for) is used for duration. seit requires the dative and indicates an ongoing period.',
       data: {
         answer: 'seit',
         hint: '"den beri" anlamında',

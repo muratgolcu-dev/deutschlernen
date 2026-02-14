@@ -90,6 +90,8 @@ Modal verb -> 2nd position, Main verb -> end of sentence (infinitive)
       id: 'a2-mv-1',
       type: 'fill-in-the-blank',
       question: 'Ich ___ (können) gut schwimmen.',
+      explanation: 'können fiilinin "ich" çekimi "kann"dır. Modal fiillerde ich ve er/sie/es aynı formu kullanır.',
+      explanationEn: 'The "ich" conjugation of können is "kann". In modal verbs, ich and er/sie/es use the same form.',
       data: {
         answer: 'kann',
         hint: 'ich formu',
@@ -100,6 +102,8 @@ Modal verb -> 2nd position, Main verb -> end of sentence (infinitive)
       id: 'a2-mv-2',
       type: 'multiple-choice',
       question: '"Gitmem yasak" Almanca\'da nasıl söylenir?',
+      explanation: 'Yasak = darf nicht. "muss nicht" zorunluluk olmadığını, "darf nicht" ise yasak olduğunu ifade eder.',
+      explanationEn: 'Forbidden = darf nicht. "muss nicht" means not necessary, while "darf nicht" means not allowed/forbidden.',
       data: {
         options: ['Ich muss nicht gehen.', 'Ich darf nicht gehen.', 'Ich kann nicht gehen.', 'Ich will nicht gehen.'],
         correctIndex: 1,
@@ -110,6 +114,8 @@ Modal verb -> 2nd position, Main verb -> end of sentence (infinitive)
       id: 'a2-mv-3',
       type: 'word-ordering',
       question: 'Cümleyi doğru sıraya koyun:',
+      explanation: 'Modal fiil cümlede 2. pozisyonda, ana fiil (sprechen) cümle sonunda mastar haliyle gelir.',
+      explanationEn: 'The modal verb goes in 2nd position, and the main verb (sprechen) goes at the end in infinitive form.',
       data: {
         words: ['sprechen', 'du', 'Kannst', 'Deutsch'],
         correctOrder: [2, 1, 3, 0],
@@ -120,6 +126,8 @@ Modal verb -> 2nd position, Main verb -> end of sentence (infinitive)
       id: 'a2-mv-4',
       type: 'fill-in-the-blank',
       question: 'Er ___ (müssen) morgen früh aufstehen.',
+      explanation: 'müssen fiilinin "er" çekimi "muss"tur. Modal fiillerde ich ve er/sie/es aynı formu kullanır.',
+      explanationEn: 'The "er" conjugation of müssen is "muss". In modal verbs, ich and er/sie/es use the same form.',
       data: {
         answer: 'muss',
         hint: 'er formu',
@@ -130,6 +138,8 @@ Modal verb -> 2nd position, Main verb -> end of sentence (infinitive)
       id: 'a2-mv-5',
       type: 'multiple-choice',
       question: 'Ich ___ einen Kaffee, bitte.',
+      explanation: 'Kibar bir istek ifadesi için "möchte" kullanılır. "bitte" ile birlikte nazik sipariş yapılır.',
+      explanationEn: 'For a polite request, "möchte" (would like) is used. Together with "bitte", it forms a polite order.',
       data: {
         options: ['möchte', 'muss', 'kann', 'darf'],
         correctIndex: 0,
