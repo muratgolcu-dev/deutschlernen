@@ -72,6 +72,8 @@ ich **werde**, du **wirst**, er **wird**, wir **werden**, ihr **werdet**, sie **
       id: 'a1-pt-1',
       type: 'fill-in-the-blank',
       question: 'Ich ___ (lernen) Deutsch.',
+      explanation: 'Düzenli fiil çekimi: kök (lern-) + ich eki (-e) = lerne.',
+      explanationEn: 'Regular verb conjugation: stem (lern-) + ich ending (-e) = lerne.',
       data: {
         answer: 'lerne',
         hint: 'ich + -e',
@@ -82,6 +84,8 @@ ich **werde**, du **wirst**, er **wird**, wir **werden**, ihr **werdet**, sie **
       id: 'a1-pt-2',
       type: 'fill-in-the-blank',
       question: 'Du ___ (spielen) Gitarre.',
+      explanation: 'Düzenli fiil çekimi: kök (spiel-) + du eki (-st) = spielst.',
+      explanationEn: 'Regular verb conjugation: stem (spiel-) + du ending (-st) = spielst.',
       data: {
         answer: 'spielst',
         hint: 'du + -st',
@@ -92,6 +96,8 @@ ich **werde**, du **wirst**, er **wird**, wir **werden**, ihr **werdet**, sie **
       id: 'a1-pt-3',
       type: 'conjugation-table',
       question: '"wohnen" (oturmak) fiilini çekimleyin:',
+      explanation: 'Düzenli fiil: kök wohn- + kişi ekleri (-e, -st, -t, -en, -t, -en).',
+      explanationEn: 'Regular verb: stem wohn- + personal endings (-e, -st, -t, -en, -t, -en).',
       data: {
         verb: 'wohnen',
         pronouns: ['ich', 'du', 'er/sie/es', 'wir', 'ihr', 'sie/Sie'],
@@ -102,6 +108,8 @@ ich **werde**, du **wirst**, er **wird**, wir **werden**, ihr **werdet**, sie **
       id: 'a1-pt-4',
       type: 'multiple-choice',
       question: 'Er ___ sehr gut Deutsch.',
+      explanation: 'sprechen düzensiz bir fiildir: er/sie/es formunda kök ünlüsü e → i olur: spricht.',
+      explanationEn: 'sprechen is an irregular verb: in the er/sie/es form, the stem vowel changes from e → i: spricht.',
       data: {
         options: ['spreche', 'sprichst', 'spricht', 'sprechen'],
         correctIndex: 2,
@@ -112,6 +120,8 @@ ich **werde**, du **wirst**, er **wird**, wir **werden**, ihr **werdet**, sie **
       id: 'a1-pt-5',
       type: 'fill-in-the-blank',
       question: 'Wir ___ (sein) aus der Türkei.',
+      explanation: 'sein tamamen düzensiz bir fiildir. "wir" ile sein → sind olur.',
+      explanationEn: 'sein is a completely irregular verb. With "wir", sein becomes sind.',
       data: {
         answer: 'sind',
         hint: '"sein" düzensiz fiildir',

@@ -1,18 +1,42 @@
 'use client';
 
-import { useState } from 'react';
-import { allGrammarLessons } from '@/lib/constants/grammar';
+import React, { useState, useMemo } from 'react';
+import { allGrammarLessons, getLessonById } from '@/lib/constants/grammar';
 import { useDeutschStore } from '@/lib/store/useDeutschStore';
 import { useLanguage } from '@/hooks/useLanguage';
-import { GrammarLesson, MultipleChoiceData, FillInBlankData } from '@/lib/types';
+import { GrammarLesson, GrammarExercise, MultipleChoiceData, FillInBlankData } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, CheckCircle, XCircle, ChevronRight } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, ChevronRight, AlertTriangle, RotateCcw, Lightbulb, Volume2, BookOpen } from 'lucide-react';
+import { GrammarExplanation } from '@/components/grammar/GrammarExplanation';
+import { MiniQuiz } from '@/components/grammar/MiniQuiz';
 
-type View = 'list' | 'lesson' | 'exercise';
+type View = 'list' | 'lesson' | 'exercise' | 'result' | 'mistakeReview';
+
+// Highlight a word/phrase in a sentence with a colored span
+function highlightInSentence(sentence: string, highlight: string): React.ReactNode {
+  const idx = sentence.toLowerCase().indexOf(highlight.toLowerCase());
+  if (idx === -1) return sentence;
+  return (
+    <>
+      {sentence.slice(0, idx)}
+      <span className="rounded bg-emerald-100 px-1 font-bold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+        {sentence.slice(idx, idx + highlight.length)}
+      </span>
+      {sentence.slice(idx + highlight.length)}
+    </>
+  );
+}
+
+interface ExerciseResult {
+  exercise: GrammarExercise;
+  correct: boolean;
+  userAnswer: string;
+  correctAnswer: string;
+}
 
 export default function GrammarPage() {
   const [view, setView] = useState<View>('list');
@@ -22,8 +46,20 @@ export default function GrammarPage() {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
-  const { lessonProgress, completeLessonExercise, completeLessonAttempt } = useDeutschStore();
+  const [exerciseResults, setExerciseResults] = useState<ExerciseResult[]>([]);
+  const [mistakeExercises, setMistakeExercises] = useState<GrammarExercise[]>([]);
+  const [isMistakeReviewMode, setIsMistakeReviewMode] = useState(false);
+
+  const {
+    lessonProgress, completeLessonExercise, completeLessonAttempt,
+    grammarMistakes, recordGrammarMistake, recordMistakeCorrect, getUnreviewedMistakes,
+  } = useDeutschStore();
   const { t, lang } = useLanguage();
+
+  // Get all unreviewed mistakes count
+  const totalMistakeCount = useMemo(() => {
+    return Object.values(grammarMistakes).filter(m => m.timesCorrectAfterMistake < 2).length;
+  }, [grammarMistakes]);
 
   const openLesson = (lesson: GrammarLesson) => {
     setActiveLesson(lesson);
@@ -36,65 +72,241 @@ export default function GrammarPage() {
     setSelectedOption(null);
     setShowResult(false);
     setCorrectCount(0);
+    setExerciseResults([]);
+    setIsMistakeReviewMode(false);
     setView('exercise');
   };
 
+  const startMistakeReview = (lessonId?: string) => {
+    const mistakes = getUnreviewedMistakes(lessonId);
+    if (mistakes.length === 0) return;
+
+    // Find the actual exercises from lessons
+    const reviewExercises: GrammarExercise[] = [];
+    for (const mistake of mistakes) {
+      const lesson = getLessonById(mistake.lessonId);
+      if (!lesson) continue;
+      const ex = lesson.exercises.find(e => e.id === mistake.exerciseId);
+      if (ex) reviewExercises.push(ex);
+    }
+
+    if (reviewExercises.length === 0) return;
+
+    setMistakeExercises(reviewExercises);
+    setExerciseIndex(0);
+    setAnswer('');
+    setSelectedOption(null);
+    setShowResult(false);
+    setCorrectCount(0);
+    setExerciseResults([]);
+    setIsMistakeReviewMode(true);
+    setView('exercise');
+  };
+
+  const getCurrentExercises = (): GrammarExercise[] => {
+    if (isMistakeReviewMode) return mistakeExercises;
+    return activeLesson?.exercises || [];
+  };
+
   const checkAnswer = () => {
-    if (!activeLesson) return;
-    const ex = activeLesson.exercises[exerciseIndex];
+    const exercises = getCurrentExercises();
+    const ex = exercises[exerciseIndex];
+    if (!ex) return;
+
     let correct = false;
+    let userAns = '';
+    let correctAns = '';
+
     if (ex.type === 'multiple-choice') {
       const data = ex.data as MultipleChoiceData;
       correct = selectedOption === data.correctIndex;
+      userAns = selectedOption !== null ? data.options[selectedOption] : '';
+      correctAns = data.options[data.correctIndex];
     } else if (ex.type === 'fill-in-the-blank') {
       const data = ex.data as FillInBlankData;
       const mainAnswer = data.answer || data.blanks?.[0]?.answer || '';
       const alts = data.acceptableAnswers || data.blanks?.[0]?.alternatives || [];
       const accepted = [mainAnswer, ...alts].map(a => a.toLowerCase());
       correct = accepted.includes(answer.trim().toLowerCase());
+      userAns = answer.trim();
+      correctAns = mainAnswer;
     }
+
     if (correct) setCorrectCount((c) => c + 1);
-    completeLessonExercise(activeLesson.id, ex.id, correct);
+
+    // Track exercise result
+    setExerciseResults(prev => [...prev, { exercise: ex, correct, userAnswer: userAns, correctAnswer: correctAns }]);
+
+    // Record in store
+    if (activeLesson && !isMistakeReviewMode) {
+      completeLessonExercise(activeLesson.id, ex.id, correct);
+    }
+
+    // Track mistakes
+    if (!correct) {
+      // Find which lesson this exercise belongs to
+      const lessonId = isMistakeReviewMode
+        ? grammarMistakes[ex.id]?.lessonId || ''
+        : activeLesson?.id || '';
+      recordGrammarMistake(lessonId, ex.id, userAns, correctAns);
+    } else if (isMistakeReviewMode) {
+      // If correctly answered during mistake review, record it
+      recordMistakeCorrect(ex.id);
+    }
+
     setShowResult(true);
   };
 
   const nextExercise = () => {
-    if (!activeLesson) return;
-    if (exerciseIndex < activeLesson.exercises.length - 1) {
+    const exercises = getCurrentExercises();
+    if (exerciseIndex < exercises.length - 1) {
       setExerciseIndex((i) => i + 1);
       setAnswer('');
       setSelectedOption(null);
       setShowResult(false);
     } else {
-      const score = Math.round((correctCount / activeLesson.exercises.length) * 100);
-      completeLessonAttempt(activeLesson.id, score);
-      setView('lesson');
+      // End of exercises
+      if (!isMistakeReviewMode && activeLesson) {
+        const score = Math.round((correctCount / exercises.length) * 100);
+        completeLessonAttempt(activeLesson.id, score);
+      }
+      setView('result');
     }
   };
 
+  const getExplanation = (ex: GrammarExercise): string => {
+    // Check exercise-level explanation
+    if (lang === 'en' && ex.explanationEn) return ex.explanationEn;
+    if (ex.explanation) return ex.explanation;
+    // Fall back to data-level explanation (MultipleChoice)
+    if (ex.type === 'multiple-choice') {
+      const data = ex.data as MultipleChoiceData;
+      if (data.explanation) return data.explanation;
+    }
+    return '';
+  };
+
+  // Result summary view
+  if (view === 'result') {
+    const exercises = getCurrentExercises();
+    const score = exercises.length > 0 ? Math.round((correctCount / exercises.length) * 100) : 0;
+    const wrongResults = exerciseResults.filter(r => !r.correct);
+
+    return (
+      <div className="mx-auto max-w-lg space-y-4 p-4 md:p-8">
+        <div className="text-center space-y-2">
+          <div className={`inline-flex h-16 w-16 items-center justify-center rounded-full ${score === 100 ? 'bg-green-100 dark:bg-green-950/30' : score >= 60 ? 'bg-yellow-100 dark:bg-yellow-950/30' : 'bg-red-100 dark:bg-red-950/30'}`}>
+            <span className="text-2xl font-bold">{score}%</span>
+          </div>
+          <h2 className="text-xl font-bold">{t('grammar.lessonScore')}</h2>
+          {score === 100 ? (
+            <p className="text-green-600 dark:text-green-400">{t('grammar.perfectScore')}</p>
+          ) : (
+            <p className="text-muted-foreground">{t('grammar.mistakeSummary')}</p>
+          )}
+        </div>
+
+        {/* Wrong answers detail */}
+        {wrongResults.length > 0 && (
+          <div className="space-y-3">
+            <h3 className="font-semibold flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-orange-500" />
+              {wrongResults.length} {lang === 'tr' ? 'hata' : 'mistake(s)'}
+            </h3>
+            {wrongResults.map((result, i) => {
+              const explanation = getExplanation(result.exercise);
+              return (
+                <Card key={i} className="border-red-200 dark:border-red-900/30">
+                  <CardContent className="p-4 space-y-2">
+                    <p className="font-medium text-sm">{result.exercise.question}</p>
+                    <div className="flex items-center gap-2 text-sm">
+                      <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                      <span className="text-red-600 dark:text-red-400 line-through">{result.userAnswer || '—'}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
+                      <span className="text-green-600 dark:text-green-400 font-medium">{result.correctAnswer}</span>
+                    </div>
+                    {explanation && (
+                      <div className="mt-2 rounded-lg bg-blue-50 dark:bg-blue-950/20 p-3 text-sm">
+                        <div className="flex items-start gap-2">
+                          <Lightbulb className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
+                          <p className="text-blue-800 dark:text-blue-300">{explanation}</p>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="flex flex-col gap-2 pt-2">
+          {wrongResults.length > 0 && (
+            <Button onClick={() => startMistakeReview(activeLesson?.id)} variant="outline" className="w-full gap-2">
+              <RotateCcw className="h-4 w-4" />
+              {t('grammar.reviewMistakes')} ({wrongResults.length})
+            </Button>
+          )}
+          <Button onClick={() => {
+            if (isMistakeReviewMode) {
+              setView('list');
+              setActiveLesson(null);
+            } else {
+              setView('lesson');
+            }
+          }} className="w-full">
+            {isMistakeReviewMode ? t('grammar.lessons') : t('vocab.back')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // Exercise view
-  if (view === 'exercise' && activeLesson) {
-    const ex = activeLesson.exercises[exerciseIndex];
+  if (view === 'exercise') {
+    const exercises = getCurrentExercises();
+    const ex = exercises[exerciseIndex];
+    if (!ex) return null;
+
     const isMultiple = ex.type === 'multiple-choice';
     const data = ex.data as MultipleChoiceData & FillInBlankData;
     let isCorrect = false;
-    if (isMultiple) isCorrect = selectedOption === (data as MultipleChoiceData).correctIndex;
-    else {
-      const mainAns = data.answer || data.blanks?.[0]?.answer || '';
-      const alts = data.acceptableAnswers || data.blanks?.[0]?.alternatives || [];
-      const accepted = [mainAns, ...alts].map(a => a?.toLowerCase());
-      isCorrect = accepted.includes(answer.trim().toLowerCase());
+    if (showResult) {
+      if (isMultiple) isCorrect = selectedOption === (data as MultipleChoiceData).correctIndex;
+      else {
+        const mainAns = data.answer || data.blanks?.[0]?.answer || '';
+        const alts = data.acceptableAnswers || data.blanks?.[0]?.alternatives || [];
+        const accepted = [mainAns, ...alts].map(a => a?.toLowerCase());
+        isCorrect = accepted.includes(answer.trim().toLowerCase());
+      }
     }
+
+    const explanation = getExplanation(ex);
+    const correctAnswer = isMultiple
+      ? (data as MultipleChoiceData).options[(data as MultipleChoiceData).correctIndex]
+      : (data.answer || data.blanks?.[0]?.answer || '');
 
     return (
       <div className="mx-auto max-w-lg space-y-4 p-4 md:p-8">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={() => setView('lesson')}>
+          <Button variant="ghost" size="sm" onClick={() => {
+            if (isMistakeReviewMode) { setView('list'); }
+            else { setView('lesson'); }
+          }}>
             <ArrowLeft className="mr-1 h-4 w-4" /> {t('vocab.back')}
           </Button>
-          <span className="text-sm text-muted-foreground">{exerciseIndex + 1}/{activeLesson.exercises.length}</span>
+          <div className="flex items-center gap-2">
+            {isMistakeReviewMode && (
+              <Badge variant="outline" className="gap-1 text-orange-600">
+                <RotateCcw className="h-3 w-3" /> {t('grammar.mistakeReview')}
+              </Badge>
+            )}
+            <span className="text-sm text-muted-foreground">{exerciseIndex + 1}/{exercises.length}</span>
+          </div>
         </div>
-        <Progress value={((exerciseIndex + 1) / activeLesson.exercises.length) * 100} className="h-2" />
+        <Progress value={((exerciseIndex + 1) / exercises.length) * 100} className="h-2" />
 
         <Card>
           <CardContent className="space-y-4 p-6">
@@ -126,11 +338,33 @@ export default function GrammarPage() {
             )}
 
             {showResult && (
-              <div className={`flex items-center gap-2 rounded-lg p-3 ${isCorrect ? 'bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400' : 'bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400'}`}>
-                {isCorrect ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
-                <span className="text-sm">
-                  {isCorrect ? t('grammar.correct') : `${t('grammar.wrong')}: ${isMultiple ? (data as MultipleChoiceData).options[(data as MultipleChoiceData).correctIndex] : (data.answer || data.blanks?.[0]?.answer)}`}
-                </span>
+              <div className="space-y-3">
+                {/* Correct/Wrong indicator */}
+                <div className={`flex items-center gap-2 rounded-lg p-3 ${isCorrect ? 'bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400' : 'bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400'}`}>
+                  {isCorrect ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+                  <div className="flex-1">
+                    {isCorrect ? (
+                      <span className="text-sm font-medium">{t('grammar.correct')}</span>
+                    ) : (
+                      <div className="space-y-1">
+                        <span className="text-sm">{t('grammar.correctAnswer')}: <strong>{correctAnswer}</strong></span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Detailed explanation - shown for WRONG answers */}
+                {!isCorrect && explanation && (
+                  <div className="rounded-lg bg-blue-50 dark:bg-blue-950/20 p-4 space-y-2">
+                    <div className="flex items-start gap-2">
+                      <Lightbulb className="h-5 w-5 text-blue-500 mt-0.5 shrink-0" />
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">{t('grammar.whyWrong')}</p>
+                        <p className="text-sm text-blue-700 dark:text-blue-400">{explanation}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -140,7 +374,7 @@ export default function GrammarPage() {
               </Button>
             ) : (
               <Button onClick={nextExercise} className="w-full">
-                {exerciseIndex < activeLesson.exercises.length - 1 ? t('grammar.next') : t('grammar.finish')}
+                {exerciseIndex < exercises.length - 1 ? t('grammar.next') : t('grammar.finish')}
               </Button>
             )}
           </CardContent>
@@ -152,54 +386,117 @@ export default function GrammarPage() {
   // Lesson detail view
   if (view === 'lesson' && activeLesson) {
     const progress = lessonProgress[activeLesson.id];
+    const lessonMistakes = getUnreviewedMistakes(activeLesson.id);
+    const explanationText = lang === 'en'
+      ? (activeLesson.explanationEn || activeLesson.explanation)
+      : activeLesson.explanation;
+    const tipsArr = lang === 'en' && activeLesson.tipsEn ? activeLesson.tipsEn : activeLesson.tips;
+
     return (
       <div className="mx-auto max-w-2xl space-y-6 p-4 md:p-8">
         <Button variant="ghost" size="sm" onClick={() => { setView('list'); setActiveLesson(null); }}>
           <ArrowLeft className="mr-1 h-4 w-4" /> {t('grammar.lessons')}
         </Button>
 
-        <div>
-          <Badge variant="outline">{activeLesson.level}</Badge>
-          <h1 className="mt-2 text-2xl font-bold">{activeLesson.title}</h1>
+        {/* Lesson header */}
+        <div className="rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-violet-950/20 p-5 border border-blue-100 dark:border-blue-900/30">
+          <div className="flex items-start justify-between">
+            <Badge variant="outline" className="bg-white/80 dark:bg-background/80">{activeLesson.level}</Badge>
+            {progress && (
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="gap-1">
+                  <CheckCircle className="h-3 w-3" /> {t('grammar.best')}: %{progress.bestScore}
+                </Badge>
+                <Badge variant="outline" className="bg-white/80 dark:bg-background/80">{progress.attempts} {t('grammar.attempts')}</Badge>
+              </div>
+            )}
+          </div>
+          <h1 className="mt-3 text-2xl font-bold">{activeLesson.title}</h1>
           <p className="text-muted-foreground">{lang === 'en' ? (activeLesson.englishTitle || activeLesson.turkishTitle) : activeLesson.turkishTitle}</p>
-          {progress && (
-            <div className="mt-2 flex items-center gap-2">
-              <Badge variant="secondary">{t('grammar.best')}: %{progress.bestScore}</Badge>
-              <Badge variant="outline">{progress.attempts} {t('grammar.attempts')}</Badge>
-            </div>
-          )}
         </div>
 
-        <Card>
-          <CardHeader><CardTitle className="text-base">{t('grammar.explanation')}</CardTitle></CardHeader>
-          <CardContent>
-            <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-line">{lang === 'en' ? (activeLesson.explanationEn || activeLesson.explanation) : activeLesson.explanation}</div>
+        {/* Mistake review */}
+        {lessonMistakes.length > 0 && (
+          <Card className="border-orange-200 dark:border-orange-900/30 bg-orange-50/50 dark:bg-orange-950/10">
+            <CardContent className="flex items-center gap-3 p-4">
+              <AlertTriangle className="h-5 w-5 text-orange-500 shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium">{lessonMistakes.length} {t('grammar.mistakesRemaining')}</p>
+                <p className="text-xs text-muted-foreground">{t('grammar.mistakeCount')}</p>
+              </div>
+              <Button size="sm" variant="outline" onClick={() => startMistakeReview(activeLesson.id)} className="gap-1">
+                <RotateCcw className="h-3 w-3" />
+                {t('grammar.reviewMistakes')}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Visual explanation */}
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-blue-500/5 to-indigo-500/5 dark:from-blue-500/10 dark:to-indigo-500/10 border-b">
+            <CardTitle className="text-base flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-blue-500" />
+              {t('grammar.explanation')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-5">
+            <GrammarExplanation text={explanationText} />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader><CardTitle className="text-base">{t('grammar.examples')}</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
+        {/* Examples - visual cards */}
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-emerald-500/5 to-green-500/5 dark:from-emerald-500/10 dark:to-green-500/10 border-b">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Volume2 className="h-4 w-4 text-emerald-500" />
+              {t('grammar.examples')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-3">
             {activeLesson.examples.map((ex, i) => (
-              <div key={i} className="rounded-lg border p-3">
-                <p className="font-medium">{ex.german}</p>
-                <p className="text-sm text-muted-foreground">{lang === 'en' ? (ex.english || ex.turkish) : ex.turkish}</p>
+              <div key={i} className="group relative rounded-xl border border-border/60 bg-gradient-to-r from-background to-muted/20 p-4 transition-all hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-900/40">
+                <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl bg-emerald-400 dark:bg-emerald-600" />
+                <p className="font-medium pl-2">{ex.highlight ? highlightInSentence(ex.german, ex.highlight) : ex.german}</p>
+                <p className="text-sm text-muted-foreground pl-2 mt-1">{lang === 'en' ? (ex.english || ex.turkish) : ex.turkish}</p>
               </div>
             ))}
           </CardContent>
         </Card>
 
-        {activeLesson.tips.length > 0 && (
-          <Card>
-            <CardHeader><CardTitle className="text-base">{t('grammar.tips')}</CardTitle></CardHeader>
-            <CardContent>
-              <ul className="list-disc space-y-1 pl-4 text-sm">
-                {(lang === 'en' && activeLesson.tipsEn ? activeLesson.tipsEn : activeLesson.tips).map((tip, i) => <li key={i}>{tip}</li>)}
-              </ul>
+        {/* Tips */}
+        {tipsArr.length > 0 && (
+          <Card className="overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-amber-500/5 to-yellow-500/5 dark:from-amber-500/10 dark:to-yellow-500/10 border-b">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Lightbulb className="h-4 w-4 text-amber-500" />
+                {t('grammar.tips')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="space-y-2.5">
+                {tipsArr.map((tip, i) => (
+                  <div key={i} className="flex items-start gap-3 rounded-lg bg-amber-50/50 dark:bg-amber-950/10 p-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30 text-xs font-bold text-amber-700 dark:text-amber-400">
+                      {i + 1}
+                    </span>
+                    <p className="text-sm text-foreground leading-relaxed">{tip}</p>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         )}
 
+        {/* Mini Quiz */}
+        <div className="space-y-2">
+          <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+            {lang === 'tr' ? 'Hızlı Kontrol' : 'Quick Check'}
+          </h3>
+          <MiniQuiz exercises={activeLesson.exercises} lang={lang} maxQuestions={2} />
+        </div>
+
+        {/* Start full exercises */}
         <Button onClick={startExercises} className="w-full" size="lg">
           {t('grammar.startExercises')} ({activeLesson.exercises.length} {t('grammar.questions')})
         </Button>
@@ -213,6 +510,25 @@ export default function GrammarPage() {
     <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
       <h1 className="text-2xl font-bold">{t('grammar.title')}</h1>
 
+      {/* Global mistake review */}
+      {totalMistakeCount > 0 && (
+        <Card className="border-orange-200 dark:border-orange-900/30 bg-orange-50/50 dark:bg-orange-950/10">
+          <CardContent className="flex items-center gap-3 p-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-950/30">
+              <RotateCcw className="h-5 w-5 text-orange-500" />
+            </div>
+            <div className="flex-1">
+              <p className="font-medium">{t('grammar.mistakeReview')}</p>
+              <p className="text-sm text-muted-foreground">{totalMistakeCount} {t('grammar.mistakesRemaining')}</p>
+            </div>
+            <Button onClick={() => startMistakeReview()} className="gap-1">
+              <RotateCcw className="h-4 w-4" />
+              {t('grammar.reviewMistakes')}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {levels.map((level) => {
         const lessons = allGrammarLessons.filter((l) => l.level === level);
         if (lessons.length === 0) return null;
@@ -222,6 +538,9 @@ export default function GrammarPage() {
             <div className="space-y-2">
               {lessons.map((lesson) => {
                 const progress = lessonProgress[lesson.id];
+                const lessonMistakeCount = Object.values(grammarMistakes).filter(
+                  m => m.lessonId === lesson.id && m.timesCorrectAfterMistake < 2
+                ).length;
                 return (
                   <Card key={lesson.id} className="cursor-pointer transition-colors hover:bg-accent" onClick={() => openLesson(lesson)}>
                     <CardContent className="flex items-center gap-4 p-4">
@@ -229,6 +548,11 @@ export default function GrammarPage() {
                         <p className="font-medium">{lesson.title}</p>
                         <p className="text-sm text-muted-foreground">{lang === 'en' ? (lesson.englishTitle || lesson.turkishTitle) : lesson.turkishTitle}</p>
                       </div>
+                      {lessonMistakeCount > 0 && (
+                        <Badge variant="outline" className="gap-1 text-orange-600 border-orange-300">
+                          <AlertTriangle className="h-3 w-3" /> {lessonMistakeCount}
+                        </Badge>
+                      )}
                       {progress?.completed && (
                         <Badge variant="secondary" className="gap-1">
                           <CheckCircle className="h-3 w-3" /> %{progress.bestScore}

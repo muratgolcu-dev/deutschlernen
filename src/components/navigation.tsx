@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, MessageCircle, GraduationCap, BarChart3, Settings } from 'lucide-react';
+import { BookOpen, MessageCircle, GraduationCap, BarChart3, Settings, ClipboardCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -14,6 +14,7 @@ export function Navigation() {
     { href: '/', label: t('nav.dashboard'), icon: BarChart3 },
     { href: '/vocabulary', label: t('nav.vocabulary'), icon: BookOpen },
     { href: '/grammar', label: t('nav.grammar'), icon: GraduationCap },
+    { href: '/quiz', label: t('nav.quiz'), icon: ClipboardCheck },
     { href: '/chat', label: t('nav.chat'), icon: MessageCircle },
     { href: '/settings', label: t('nav.settings'), icon: Settings },
   ];

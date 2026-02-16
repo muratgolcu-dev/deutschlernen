@@ -66,6 +66,8 @@ In German, nouns can be combined. The article is determined by the **last word**
       id: 'a1-ng-1',
       type: 'multiple-choice',
       question: '"Kinder" kelimesinin tekil hali nedir?',
+      explanation: '"Kind" nötr (Neutrum) bir isimdir → das Kind. Çoğul hali -er eki alarak "die Kinder" olur. Çoğulda tüm isimler "die" artikelini alır.',
+      explanationEn: '"Kind" is a neuter noun → das Kind. The plural form takes the -er suffix to become "die Kinder". In the plural, all nouns take the article "die".',
       data: {
         options: ['der Kind', 'die Kind', 'das Kind', 'das Kinder'],
         correctIndex: 2,
@@ -76,6 +78,8 @@ In German, nouns can be combined. The article is determined by the **last word**
       id: 'a1-ng-2',
       type: 'multiple-choice',
       question: '"Hausaufgabe" (ödev) kelimesinin artikeli nedir?',
+      explanation: 'Bileşik isimlerde (Komposita) artikel her zaman son kelimeye göre belirlenir. "Hausaufgabe" = Haus + Aufgabe. "Aufgabe" dişildir → die Aufgabe, dolayısıyla die Hausaufgabe.',
+      explanationEn: 'In compound nouns (Komposita), the article is always determined by the last word. "Hausaufgabe" = Haus + Aufgabe. "Aufgabe" is feminine → die Aufgabe, therefore die Hausaufgabe.',
       data: {
         options: ['der', 'die', 'das', 'den'],
         correctIndex: 1,
@@ -86,6 +90,8 @@ In German, nouns can be combined. The article is determined by the **last word**
       id: 'a1-ng-3',
       type: 'fill-in-the-blank',
       question: 'der Stuhl → die ___ (çoğul)',
+      explanation: '"Stuhl" kelimesinin çoğulunda hem Umlaut değişimi (u → ü) hem de -e eki olur: Stuhl → Stühle. Bazı eril isimler çoğulda sesli harf değişimi (Umlaut) yapar.',
+      explanationEn: 'The plural of "Stuhl" involves both an Umlaut change (u → ü) and the -e suffix: Stuhl → Stühle. Some masculine nouns undergo a vowel change (Umlaut) in the plural.',
       data: {
         answer: 'Stühle',
         hint: 'Umlaut + e',
@@ -96,6 +102,8 @@ In German, nouns can be combined. The article is determined by the **last word**
       id: 'a1-ng-4',
       type: 'multiple-choice',
       question: '"Auto" kelimesinin çoğulu nedir?',
+      explanation: 'Yabancı kökenli veya -o, -a ile biten isimler çoğulda genellikle -s eki alır: das Auto → die Autos. Benzer örnekler: das Kino → die Kinos, das Foto → die Fotos.',
+      explanationEn: 'Foreign-origin words or nouns ending in -o, -a usually take the -s suffix in the plural: das Auto → die Autos. Similar examples: das Kino → die Kinos, das Foto → die Fotos.',
       data: {
         options: ['Auten', 'Autos', 'Autoen', 'Auto'],
         correctIndex: 1,

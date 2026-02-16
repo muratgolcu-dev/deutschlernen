@@ -9,12 +9,25 @@ import { a2ModalVerbs } from './a2-modal-verbs';
 import { a2PastTense } from './a2-past-tense';
 import { a2Prepositions } from './a2-prepositions';
 import { b1Genitiv } from './b1-genitiv';
+import { b1Nebensaetze } from './b1-nebensaetze';
+import { b1Passiv } from './b1-passiv';
+import { b1Relativsaetze } from './b1-relativsaetze';
+import { b2KonjunktivII } from './b2-konjunktiv-ii';
+import { b2KonjunktivI } from './b2-konjunktiv-i';
+import { b2Partizip } from './b2-partizip';
+import { b2Konnektoren } from './b2-konnektoren';
+import { b2PassivErweitert } from './b2-passiv-erweitert';
+import { b2PraepositionenErweitert } from './b2-praepositionen-erweitert';
+import { b2IndirekteRede } from './b2-indirekte-rede';
+import { b2Nominalisierung } from './b2-nominalisierung';
 import { GrammarLesson } from '@/lib/types';
 
 export const allGrammarLessons: GrammarLesson[] = [
   a1Articles, a1PresentTense, a1NounGenders, a1BasicSentences, a1NumbersTime,
   a2Akkusativ, a2Dativ, a2ModalVerbs, a2PastTense, a2Prepositions,
-  b1Genitiv,
+  b1Genitiv, b1Nebensaetze, b1Passiv, b1Relativsaetze,
+  b2KonjunktivII, b2KonjunktivI, b2Partizip, b2Konnektoren,
+  b2PassivErweitert, b2PraepositionenErweitert, b2IndirekteRede, b2Nominalisierung,
 ].sort((a, b) => a.order - b.order);
 
 export function getLessonsByLevel(level: string): GrammarLesson[] {

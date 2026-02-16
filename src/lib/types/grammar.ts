@@ -30,6 +30,8 @@ export interface GrammarExercise {
   type: ExerciseType;
   question: string;
   instruction?: string;
+  explanation?: string;
+  explanationEn?: string;
   data: FillInBlankData | MultipleChoiceData | WordOrderingData | ConjugationTableData;
 }
 
@@ -61,6 +63,17 @@ export interface ConjugationTableData {
   hints?: string[];
 }
 
+export interface ExerciseMistake {
+  exerciseId: string;
+  lessonId: string;
+  wrongAnswer: string;
+  correctAnswer: string;
+  timestamp: string;
+  reviewedAt: string | null;
+  timesWrong: number;
+  timesCorrectAfterMistake: number;
+}
+
 export interface LessonProgress {
   lessonId: string;
   completed: boolean;
@@ -69,4 +82,5 @@ export interface LessonProgress {
   attempts: number;
   exerciseResults: Record<string, boolean>;
   lastAttemptDate: string | null;
+  mistakeExerciseIds?: string[];
 }

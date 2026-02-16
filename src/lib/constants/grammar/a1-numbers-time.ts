@@ -78,6 +78,8 @@ export const a1NumbersTime: GrammarLesson = {
       id: 'a1-nt-1',
       type: 'multiple-choice',
       question: '"halb sechs" saat kaçtır?',
+      explanation: '"halb" bir sonraki saate yarım kala demektir. halb sechs = 5:30 (6\'ya yarım kala).',
+      explanationEn: '"halb" means half to the next hour. halb sechs = 5:30 (half to six).',
       data: {
         options: ['6:30', '5:30', '5:00', '6:00'],
         correctIndex: 1,
@@ -88,6 +90,8 @@ export const a1NumbersTime: GrammarLesson = {
       id: 'a1-nt-2',
       type: 'fill-in-the-blank',
       question: '47 = sieben___ (Almanca yazın)',
+      explanation: '21-99 arası sayılarda birler önce söylenir: 7 (sieben) + und + 40 (vierzig) = siebenundvierzig.',
+      explanationEn: 'For numbers 21-99, the ones digit comes first: 7 (sieben) + und + 40 (vierzig) = siebenundvierzig.',
       data: {
         answer: 'undvierzig',
         hint: 'Birler önce söylenir: 7 ve 40',
@@ -98,6 +102,8 @@ export const a1NumbersTime: GrammarLesson = {
       id: 'a1-nt-3',
       type: 'multiple-choice',
       question: '3:15 için doğru ifade hangisidir?',
+      explanation: '15 dakika geçe = Viertel nach. 3:15 = Viertel nach drei (üçü çeyrek geçe).',
+      explanationEn: '15 minutes past = Viertel nach. 3:15 = Viertel nach drei (quarter past three).',
       data: {
         options: ['Viertel vor drei', 'Viertel nach drei', 'halb drei', 'drei Uhr fünfzehn'],
         correctIndex: 1,
@@ -108,6 +114,8 @@ export const a1NumbersTime: GrammarLesson = {
       id: 'a1-nt-4',
       type: 'fill-in-the-blank',
       question: 'Ich bin ___ (32) Jahre alt.',
+      explanation: '32 = 2 (zwei) + und + 30 (dreißig) = zweiunddreißig. Birler basamağı önce söylenir.',
+      explanationEn: '32 = 2 (zwei) + und + 30 (dreißig) = zweiunddreißig. The ones digit is said first.',
       data: {
         answer: 'zweiunddreißig',
         hint: '2 ve 30',

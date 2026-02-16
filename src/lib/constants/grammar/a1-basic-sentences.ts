@@ -86,6 +86,8 @@ Question word + verb:
       id: 'a1-bs-1',
       type: 'word-ordering',
       question: 'Cümleyi doğru sıraya koyun:',
+      explanation: 'Almanca düz cümlelerde fiil her zaman ikinci sırada gelir: Özne + Fiil + Nesne. "Ich lerne Deutsch." → Ich (özne) + lerne (fiil) + Deutsch (nesne).',
+      explanationEn: 'In German declarative sentences, the verb always comes in second position: Subject + Verb + Object. "Ich lerne Deutsch." → Ich (subject) + lerne (verb) + Deutsch (object).',
       data: {
         words: ['Deutsch', 'Ich', 'lerne'],
         correctOrder: [1, 2, 0],
@@ -96,6 +98,8 @@ Question word + verb:
       id: 'a1-bs-2',
       type: 'word-ordering',
       question: 'Soru cümlesini oluşturun:',
+      explanation: 'W-sorularında sıralama: Soru kelimesi + Fiil + Özne. "Wo wohnst du?" → Wo (soru kelimesi) + wohnst (fiil) + du (özne). Fiil her zaman ikinci sırada kalır.',
+      explanationEn: 'In W-questions the order is: Question word + Verb + Subject. "Wo wohnst du?" → Wo (question word) + wohnst (verb) + du (subject). The verb always stays in second position.',
       data: {
         words: ['du', 'Wo', 'wohnst'],
         correctOrder: [1, 2, 0],
@@ -106,6 +110,8 @@ Question word + verb:
       id: 'a1-bs-3',
       type: 'multiple-choice',
       question: '"Arabam yok" cümlesini Almanca\'ya çevirin:',
+      explanation: 'Belirsiz artikel (ein/eine) ile kullanılan isimleri olumsuz yapmak için "kein/keine" kullanılır, "nicht" değil. "ein Auto" → olumsuz: "kein Auto". Örnek: Ich habe ein Auto → Ich habe kein Auto.',
+      explanationEn: 'To negate nouns with indefinite articles (ein/eine), use "kein/keine" instead of "nicht". "ein Auto" → negative: "kein Auto". Example: Ich habe ein Auto → Ich habe kein Auto.',
       data: {
         options: ['Ich habe nicht Auto.', 'Ich habe kein Auto.', 'Ich nicht habe Auto.', 'Ich habe Auto nicht.'],
         correctIndex: 1,
@@ -116,6 +122,8 @@ Question word + verb:
       id: 'a1-bs-4',
       type: 'fill-in-the-blank',
       question: '___ heißt du? (Adın ne?)',
+      explanation: '"Adın ne?" sorusu Almanca\'da "Wie heißt du?" olarak sorulur. "Wie" = nasıl/ne. Almanca\'da isim sormak için "Wie" (nasıl) kullanılır, "Was" (ne) değil.',
+      explanationEn: '"What is your name?" in German is "Wie heißt du?" "Wie" = how/what. In German, "Wie" (how) is used to ask someone\'s name, not "Was" (what).',
       data: {
         answer: 'Wie',
         hint: 'Nasıl anlamında soru kelimesi',
@@ -126,6 +134,8 @@ Question word + verb:
       id: 'a1-bs-5',
       type: 'multiple-choice',
       question: 'Hangisi doğru cümle yapısıdır?',
+      explanation: 'Almanca düz cümlelerde fiil her zaman ikinci pozisyonda yer alır: Özne + Fiil + Nesne. "Ich lerne Deutsch." doğru sıralamadır. "Lerne ich Deutsch?" ise soru cümlesi olur.',
+      explanationEn: 'In German declarative sentences, the verb always goes in second position: Subject + Verb + Object. "Ich lerne Deutsch." is the correct order. "Lerne ich Deutsch?" would be a question.',
       data: {
         options: ['Ich Deutsch lerne.', 'Deutsch ich lerne.', 'Ich lerne Deutsch.', 'Lerne ich Deutsch.'],
         correctIndex: 2,

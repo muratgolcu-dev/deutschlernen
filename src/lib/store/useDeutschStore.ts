@@ -4,6 +4,7 @@ import {
   WordProgress,
   WordStatus,
   LessonProgress,
+  ExerciseMistake,
   Conversation,
   ChatMessage,
   NotebookPageMeta,
@@ -47,6 +48,7 @@ function getTodayStr(): string {
 interface DeutschState {
   wordProgress: Record<string, WordProgress>;
   lessonProgress: Record<string, LessonProgress>;
+  grammarMistakes: Record<string, ExerciseMistake>;
   conversations: Conversation[];
   activeConversationId: string | null;
   notebookPages: NotebookPageMeta[];
@@ -63,6 +65,10 @@ interface DeutschState {
   initWordProgress: (wordId: string) => void;
   completeLessonExercise: (lessonId: string, exerciseId: string, correct: boolean) => void;
   completeLessonAttempt: (lessonId: string, score: number) => void;
+  recordGrammarMistake: (lessonId: string, exerciseId: string, wrongAnswer: string, correctAnswer: string) => void;
+  markMistakeReviewed: (exerciseId: string) => void;
+  getUnreviewedMistakes: (lessonId?: string) => ExerciseMistake[];
+  recordMistakeCorrect: (exerciseId: string) => void;
   addConversation: (conversation: Conversation) => void;
   setActiveConversation: (id: string | null) => void;
   addMessage: (conversationId: string, message: ChatMessage) => void;
@@ -126,6 +132,7 @@ export const useDeutschStore = create<DeutschState>()(
     (set, get) => ({
       wordProgress: {},
       lessonProgress: {},
+      grammarMistakes: {},
       conversations: [],
       activeConversationId: null,
       notebookPages: [],
@@ -233,6 +240,63 @@ export const useDeutschStore = create<DeutschState>()(
         get().recordActivity({ lessonsCompleted: 1 });
         get().updateChallengeProgress('lessonsCompleted', 1);
         get().checkBadges();
+      },
+
+      recordGrammarMistake: (lessonId, exerciseId, wrongAnswer, correctAnswer) => {
+        set((state) => {
+          const existing = state.grammarMistakes[exerciseId];
+          return {
+            grammarMistakes: {
+              ...state.grammarMistakes,
+              [exerciseId]: {
+                exerciseId,
+                lessonId,
+                wrongAnswer,
+                correctAnswer,
+                timestamp: new Date().toISOString(),
+                reviewedAt: null,
+                timesWrong: (existing?.timesWrong || 0) + 1,
+                timesCorrectAfterMistake: existing?.timesCorrectAfterMistake || 0,
+              },
+            },
+          };
+        });
+      },
+
+      markMistakeReviewed: (exerciseId) => {
+        set((state) => {
+          const existing = state.grammarMistakes[exerciseId];
+          if (!existing) return state;
+          return {
+            grammarMistakes: {
+              ...state.grammarMistakes,
+              [exerciseId]: { ...existing, reviewedAt: new Date().toISOString() },
+            },
+          };
+        });
+      },
+
+      getUnreviewedMistakes: (lessonId) => {
+        const mistakes = Object.values(get().grammarMistakes);
+        const filtered = lessonId ? mistakes.filter((m) => m.lessonId === lessonId) : mistakes;
+        return filtered.filter((m) => m.timesCorrectAfterMistake < 2);
+      },
+
+      recordMistakeCorrect: (exerciseId) => {
+        set((state) => {
+          const existing = state.grammarMistakes[exerciseId];
+          if (!existing) return state;
+          return {
+            grammarMistakes: {
+              ...state.grammarMistakes,
+              [exerciseId]: {
+                ...existing,
+                timesCorrectAfterMistake: existing.timesCorrectAfterMistake + 1,
+                reviewedAt: new Date().toISOString(),
+              },
+            },
+          };
+        });
       },
 
       addConversation: (conversation) => set((state) => ({
@@ -376,7 +440,7 @@ export const useDeutschStore = create<DeutschState>()(
       updateSettings: (partial) => set((state) => ({ settings: { ...state.settings, ...partial } })),
 
       resetAllData: () => set({
-        wordProgress: {}, lessonProgress: {}, conversations: [],
+        wordProgress: {}, lessonProgress: {}, grammarMistakes: {}, conversations: [],
         activeConversationId: null, notebookPages: [], dailyActivities: {},
         settings: defaultSettings, xp: 0, rank: 'Anfänger', badges: initialBadges,
         dailyChallenge: defaultDailyChallenge, showLevelUp: false, lastXPGain: null,
@@ -386,6 +450,7 @@ export const useDeutschStore = create<DeutschState>()(
         const state = get();
         return JSON.stringify({
           wordProgress: state.wordProgress, lessonProgress: state.lessonProgress,
+          grammarMistakes: state.grammarMistakes,
           conversations: state.conversations, notebookPages: state.notebookPages,
           dailyActivities: state.dailyActivities, settings: state.settings,
           xp: state.xp, rank: state.rank, badges: state.badges,
@@ -397,6 +462,7 @@ export const useDeutschStore = create<DeutschState>()(
           const data = JSON.parse(json);
           set({
             wordProgress: data.wordProgress || {}, lessonProgress: data.lessonProgress || {},
+            grammarMistakes: data.grammarMistakes || {},
             conversations: data.conversations || [], notebookPages: data.notebookPages || [],
             dailyActivities: data.dailyActivities || {}, settings: { ...defaultSettings, ...data.settings },
             xp: data.xp || 0, rank: data.rank || 'Anfänger', badges: { ...initialBadges, ...data.badges },
