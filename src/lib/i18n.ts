@@ -5,6 +5,7 @@ const translations = {
   'nav.dashboard': { tr: 'Panel', en: 'Dashboard' },
   'nav.vocabulary': { tr: 'Kelimeler', en: 'Vocabulary' },
   'nav.grammar': { tr: 'Gramer', en: 'Grammar' },
+  'nav.quiz': { tr: 'Quiz', en: 'Quiz' },
   'nav.chat': { tr: 'Sohbet', en: 'Chat' },
   'nav.settings': { tr: 'Ayarlar', en: 'Settings' },
 
@@ -82,6 +83,30 @@ const translations = {
   'grammar.lessonScore': { tr: 'Ders Puanı', en: 'Lesson Score' },
   'grammar.mistakeSummary': { tr: 'Bu dersten hatalar tekrar sorulacak', en: 'Mistakes from this lesson will be re-asked' },
   'grammar.perfectScore': { tr: 'Mükemmel! Hatasız tamamladın!', en: 'Perfect! Completed without mistakes!' },
+
+  // Quiz
+  'quiz.title': { tr: 'Quiz', en: 'Quiz' },
+  'quiz.selectLevel': { tr: 'Seviye Seç', en: 'Select Level' },
+  'quiz.selectTopic': { tr: 'Konu Seç', en: 'Select Topic' },
+  'quiz.grammar': { tr: 'Gramer', en: 'Grammar' },
+  'quiz.vocabulary': { tr: 'Kelime', en: 'Vocabulary' },
+  'quiz.mixed': { tr: 'Karışık', en: 'Mixed' },
+  'quiz.start': { tr: 'Quiz Başlat', en: 'Start Quiz' },
+  'quiz.question': { tr: 'Soru', en: 'Question' },
+  'quiz.result': { tr: 'Sonuç', en: 'Result' },
+  'quiz.score': { tr: 'Puan', en: 'Score' },
+  'quiz.correct': { tr: 'Doğru', en: 'Correct' },
+  'quiz.wrong': { tr: 'Yanlış', en: 'Wrong' },
+  'quiz.tryAgain': { tr: 'Tekrar Dene', en: 'Try Again' },
+  'quiz.backToQuizzes': { tr: 'Quiz Listesine Dön', en: 'Back to Quizzes' },
+  'quiz.weakPoints': { tr: 'Eksikler', en: 'Weak Points' },
+  'quiz.weakPointsDesc': { tr: 'Bu konularda tekrar çalışmalısın', en: 'You should review these topics' },
+  'quiz.perfect': { tr: 'Mükemmel! Tam puan!', en: 'Perfect! Full score!' },
+  'quiz.great': { tr: 'Harika! Çok az hatan var.', en: 'Great! Very few mistakes.' },
+  'quiz.good': { tr: 'İyi! Biraz daha çalışmalısın.', en: 'Good! You need a bit more practice.' },
+  'quiz.needsPractice': { tr: 'Bu konuları tekrar etmelisin.', en: 'You should review these topics.' },
+  'quiz.questions': { tr: 'soru', en: 'questions' },
+  'quiz.quizzesAvailable': { tr: 'quiz mevcut', en: 'quizzes available' },
 
   // Settings
   'settings.title': { tr: 'Ayarlar', en: 'Settings' },

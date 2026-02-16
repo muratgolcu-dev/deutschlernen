@@ -16,6 +16,10 @@ import { b2KonjunktivII } from './b2-konjunktiv-ii';
 import { b2KonjunktivI } from './b2-konjunktiv-i';
 import { b2Partizip } from './b2-partizip';
 import { b2Konnektoren } from './b2-konnektoren';
+import { b2PassivErweitert } from './b2-passiv-erweitert';
+import { b2PraepositionenErweitert } from './b2-praepositionen-erweitert';
+import { b2IndirekteRede } from './b2-indirekte-rede';
+import { b2Nominalisierung } from './b2-nominalisierung';
 import { GrammarLesson } from '@/lib/types';
 
 export const allGrammarLessons: GrammarLesson[] = [
@@ -23,6 +27,7 @@ export const allGrammarLessons: GrammarLesson[] = [
   a2Akkusativ, a2Dativ, a2ModalVerbs, a2PastTense, a2Prepositions,
   b1Genitiv, b1Nebensaetze, b1Passiv, b1Relativsaetze,
   b2KonjunktivII, b2KonjunktivI, b2Partizip, b2Konnektoren,
+  b2PassivErweitert, b2PraepositionenErweitert, b2IndirekteRede, b2Nominalisierung,
 ].sort((a, b) => a.order - b.order);
 
 export function getLessonsByLevel(level: string): GrammarLesson[] {
