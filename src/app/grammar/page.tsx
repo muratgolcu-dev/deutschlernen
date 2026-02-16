@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { allGrammarLessons, getLessonById } from '@/lib/constants/grammar';
 import { useDeutschStore } from '@/lib/store/useDeutschStore';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -10,9 +10,26 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, CheckCircle, XCircle, ChevronRight, AlertTriangle, RotateCcw, Lightbulb } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, ChevronRight, AlertTriangle, RotateCcw, Lightbulb, Volume2, BookOpen } from 'lucide-react';
+import { GrammarExplanation } from '@/components/grammar/GrammarExplanation';
+import { MiniQuiz } from '@/components/grammar/MiniQuiz';
 
 type View = 'list' | 'lesson' | 'exercise' | 'result' | 'mistakeReview';
+
+// Highlight a word/phrase in a sentence with a colored span
+function highlightInSentence(sentence: string, highlight: string): React.ReactNode {
+  const idx = sentence.toLowerCase().indexOf(highlight.toLowerCase());
+  if (idx === -1) return sentence;
+  return (
+    <>
+      {sentence.slice(0, idx)}
+      <span className="rounded bg-emerald-100 px-1 font-bold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+        {sentence.slice(idx, idx + highlight.length)}
+      </span>
+      {sentence.slice(idx + highlight.length)}
+    </>
+  );
+}
 
 interface ExerciseResult {
   exercise: GrammarExercise;
@@ -370,6 +387,10 @@ export default function GrammarPage() {
   if (view === 'lesson' && activeLesson) {
     const progress = lessonProgress[activeLesson.id];
     const lessonMistakes = getUnreviewedMistakes(activeLesson.id);
+    const explanationText = lang === 'en'
+      ? (activeLesson.explanationEn || activeLesson.explanation)
+      : activeLesson.explanation;
+    const tipsArr = lang === 'en' && activeLesson.tipsEn ? activeLesson.tipsEn : activeLesson.tips;
 
     return (
       <div className="mx-auto max-w-2xl space-y-6 p-4 md:p-8">
@@ -377,19 +398,24 @@ export default function GrammarPage() {
           <ArrowLeft className="mr-1 h-4 w-4" /> {t('grammar.lessons')}
         </Button>
 
-        <div>
-          <Badge variant="outline">{activeLesson.level}</Badge>
-          <h1 className="mt-2 text-2xl font-bold">{activeLesson.title}</h1>
+        {/* Lesson header */}
+        <div className="rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-violet-950/20 p-5 border border-blue-100 dark:border-blue-900/30">
+          <div className="flex items-start justify-between">
+            <Badge variant="outline" className="bg-white/80 dark:bg-background/80">{activeLesson.level}</Badge>
+            {progress && (
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="gap-1">
+                  <CheckCircle className="h-3 w-3" /> {t('grammar.best')}: %{progress.bestScore}
+                </Badge>
+                <Badge variant="outline" className="bg-white/80 dark:bg-background/80">{progress.attempts} {t('grammar.attempts')}</Badge>
+              </div>
+            )}
+          </div>
+          <h1 className="mt-3 text-2xl font-bold">{activeLesson.title}</h1>
           <p className="text-muted-foreground">{lang === 'en' ? (activeLesson.englishTitle || activeLesson.turkishTitle) : activeLesson.turkishTitle}</p>
-          {progress && (
-            <div className="mt-2 flex items-center gap-2">
-              <Badge variant="secondary">{t('grammar.best')}: %{progress.bestScore}</Badge>
-              <Badge variant="outline">{progress.attempts} {t('grammar.attempts')}</Badge>
-            </div>
-          )}
         </div>
 
-        {/* Mistake review button for this lesson */}
+        {/* Mistake review */}
         {lessonMistakes.length > 0 && (
           <Card className="border-orange-200 dark:border-orange-900/30 bg-orange-50/50 dark:bg-orange-950/10">
             <CardContent className="flex items-center gap-3 p-4">
@@ -406,36 +432,71 @@ export default function GrammarPage() {
           </Card>
         )}
 
-        <Card>
-          <CardHeader><CardTitle className="text-base">{t('grammar.explanation')}</CardTitle></CardHeader>
-          <CardContent>
-            <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-line">{lang === 'en' ? (activeLesson.explanationEn || activeLesson.explanation) : activeLesson.explanation}</div>
+        {/* Visual explanation */}
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-blue-500/5 to-indigo-500/5 dark:from-blue-500/10 dark:to-indigo-500/10 border-b">
+            <CardTitle className="text-base flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-blue-500" />
+              {t('grammar.explanation')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-5">
+            <GrammarExplanation text={explanationText} />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader><CardTitle className="text-base">{t('grammar.examples')}</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
+        {/* Examples - visual cards */}
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-emerald-500/5 to-green-500/5 dark:from-emerald-500/10 dark:to-green-500/10 border-b">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Volume2 className="h-4 w-4 text-emerald-500" />
+              {t('grammar.examples')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-3">
             {activeLesson.examples.map((ex, i) => (
-              <div key={i} className="rounded-lg border p-3">
-                <p className="font-medium">{ex.german}</p>
-                <p className="text-sm text-muted-foreground">{lang === 'en' ? (ex.english || ex.turkish) : ex.turkish}</p>
+              <div key={i} className="group relative rounded-xl border border-border/60 bg-gradient-to-r from-background to-muted/20 p-4 transition-all hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-900/40">
+                <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl bg-emerald-400 dark:bg-emerald-600" />
+                <p className="font-medium pl-2">{ex.highlight ? highlightInSentence(ex.german, ex.highlight) : ex.german}</p>
+                <p className="text-sm text-muted-foreground pl-2 mt-1">{lang === 'en' ? (ex.english || ex.turkish) : ex.turkish}</p>
               </div>
             ))}
           </CardContent>
         </Card>
 
-        {activeLesson.tips.length > 0 && (
-          <Card>
-            <CardHeader><CardTitle className="text-base">{t('grammar.tips')}</CardTitle></CardHeader>
-            <CardContent>
-              <ul className="list-disc space-y-1 pl-4 text-sm">
-                {(lang === 'en' && activeLesson.tipsEn ? activeLesson.tipsEn : activeLesson.tips).map((tip, i) => <li key={i}>{tip}</li>)}
-              </ul>
+        {/* Tips */}
+        {tipsArr.length > 0 && (
+          <Card className="overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-amber-500/5 to-yellow-500/5 dark:from-amber-500/10 dark:to-yellow-500/10 border-b">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Lightbulb className="h-4 w-4 text-amber-500" />
+                {t('grammar.tips')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="space-y-2.5">
+                {tipsArr.map((tip, i) => (
+                  <div key={i} className="flex items-start gap-3 rounded-lg bg-amber-50/50 dark:bg-amber-950/10 p-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30 text-xs font-bold text-amber-700 dark:text-amber-400">
+                      {i + 1}
+                    </span>
+                    <p className="text-sm text-foreground leading-relaxed">{tip}</p>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         )}
 
+        {/* Mini Quiz */}
+        <div className="space-y-2">
+          <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+            {lang === 'tr' ? 'Hızlı Kontrol' : 'Quick Check'}
+          </h3>
+          <MiniQuiz exercises={activeLesson.exercises} lang={lang} maxQuestions={2} />
+        </div>
+
+        {/* Start full exercises */}
         <Button onClick={startExercises} className="w-full" size="lg">
           {t('grammar.startExercises')} ({activeLesson.exercises.length} {t('grammar.questions')})
         </Button>
