@@ -25,10 +25,10 @@ export function useChat() {
     return { cleanContent: cleanContent.trim() };
   }, []);
 
-  const sendMessage = useCallback(async (messages: { role: string; content: string }[], _apiKey?: string, systemPrompt?: string): Promise<{ content: string; corrections: Correction[]; translation?: string } | null> => {
+  const sendMessage = useCallback(async (messages: { role: string; content: string }[], apiKey?: string, systemPrompt?: string): Promise<{ content: string; corrections: Correction[]; translation?: string } | null> => {
     setIsLoading(true); setStreamingContent('');
     try {
-      const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages, systemPrompt }) });
+      const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages, systemPrompt, apiKey }) });
       if (!response.ok) throw new Error('Failed');
       const reader = response.body?.getReader();
       if (!reader) throw new Error('No reader');
