@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { CEFRLevel } from '@/lib/types';
 import { NativeLanguage } from '@/lib/types/settings';
-import { Download, Upload, Trash2 } from 'lucide-react';
+import { Download, Upload, Trash2, Key } from 'lucide-react';
 
 const BADGES_INFO: Record<string, { icon: string }> = {
   'erste-schritte': { icon: '🎯' },
@@ -114,6 +114,7 @@ export default function SettingsPage() {
             <Label>{t('settings.translationHints')}</Label>
             <Switch checked={settings.showTranslationHints} onCheckedChange={(v) => updateSettings({ showTranslationHints: v })} />
           </div>
+
         </CardContent>
       </Card>
 
@@ -163,6 +164,19 @@ export default function SettingsPage() {
       <Card>
         <CardHeader><CardTitle className="text-base">{t('settings.dataManagement')}</CardTitle></CardHeader>
         <CardContent className="space-y-3">
+          <div className="space-y-2">
+            <Label className="flex items-center gap-1.5">
+              <Key className="h-3.5 w-3.5" />
+              {t('settings.apiKey')}
+            </Label>
+            <Input
+              placeholder={t('settings.apiKeyPlaceholder')}
+              value={settings.anthropicApiKey ?? ''}
+              onChange={(e) => updateSettings({ anthropicApiKey: e.target.value })}
+            />
+            <p className="text-xs text-muted-foreground">{t('settings.apiKeyDesc')}</p>
+          </div>
+
           <Button variant="outline" className="w-full gap-2" onClick={handleExport}>
             <Download className="h-4 w-4" /> {t('settings.export')}
           </Button>
