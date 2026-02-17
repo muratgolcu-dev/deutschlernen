@@ -115,19 +115,24 @@ export default function SettingsPage() {
             <Switch checked={settings.showTranslationHints} onCheckedChange={(v) => updateSettings({ showTranslationHints: v })} />
           </div>
 
-          <div className="space-y-2">
-            <Label className="flex items-center gap-1.5">
-              <Key className="h-3.5 w-3.5" />
-              {t('settings.apiKey')}
-            </Label>
-            <Input
-              type="password"
-              placeholder={t('settings.apiKeyPlaceholder')}
-              value={settings.anthropicApiKey}
-              onChange={(e) => updateSettings({ anthropicApiKey: e.target.value })}
-            />
-            <p className="text-xs text-muted-foreground">{t('settings.apiKeyDesc')}</p>
-          </div>
+        </CardContent>
+      </Card>
+
+      {/* API Key */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-1.5 text-base">
+            <Key className="h-4 w-4" />
+            {t('settings.apiKey')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <Input
+            placeholder={t('settings.apiKeyPlaceholder')}
+            value={settings.anthropicApiKey}
+            onChange={(e) => updateSettings({ anthropicApiKey: e.target.value })}
+          />
+          <p className="text-xs text-muted-foreground">{t('settings.apiKeyDesc')}</p>
         </CardContent>
       </Card>
 
