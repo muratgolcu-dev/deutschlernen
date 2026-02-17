@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { CEFRLevel } from '@/lib/types';
 import { NativeLanguage } from '@/lib/types/settings';
-import { Download, Upload, Trash2 } from 'lucide-react';
+import { Download, Upload, Trash2, Key } from 'lucide-react';
 
 const BADGES_INFO: Record<string, { icon: string }> = {
   'erste-schritte': { icon: '🎯' },
@@ -113,6 +113,20 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <Label>{t('settings.translationHints')}</Label>
             <Switch checked={settings.showTranslationHints} onCheckedChange={(v) => updateSettings({ showTranslationHints: v })} />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="flex items-center gap-1.5">
+              <Key className="h-3.5 w-3.5" />
+              {t('settings.apiKey')}
+            </Label>
+            <Input
+              type="password"
+              placeholder={t('settings.apiKeyPlaceholder')}
+              value={settings.anthropicApiKey}
+              onChange={(e) => updateSettings({ anthropicApiKey: e.target.value })}
+            />
+            <p className="text-xs text-muted-foreground">{t('settings.apiKeyDesc')}</p>
           </div>
         </CardContent>
       </Card>
