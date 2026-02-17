@@ -488,6 +488,18 @@ export const useDeutschStore = create<DeutschState>()(
         } catch { return false; }
       },
     }),
-    { name: 'deutschlernen-storage', version: 1 }
+    {
+      name: 'deutschlernen-storage',
+      version: 1,
+      merge: (persisted, current) => {
+        const p = persisted as Partial<DeutschState>;
+        return {
+          ...current,
+          ...p,
+          settings: { ...defaultSettings, ...(p.settings || {}) },
+          badges: { ...initialBadges, ...(p.badges || {}) },
+        };
+      },
+    }
   )
 );
