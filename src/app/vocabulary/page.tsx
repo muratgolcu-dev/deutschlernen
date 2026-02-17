@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { vocabularyCategories, getWordById } from '@/lib/constants/vocabulary';
 import { useDeutschStore } from '@/lib/store/useDeutschStore';
 import { useSpacedRepetition } from '@/hooks/useSpacedRepetition';
@@ -10,10 +10,31 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, Volume2, Eye, EyeOff, ChevronRight, RotateCcw } from 'lucide-react';
-import { VocabularyWord } from '@/lib/types';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { ArrowLeft, Volume2, Eye, EyeOff, ChevronRight, RotateCcw, FileUp, Trash2, Loader2, FileText, Check } from 'lucide-react';
+import { VocabularyWord, CustomVocabularyCategory, CEFRLevel } from '@/lib/types';
 
 type View = 'categories' | 'category-words' | 'flashcard';
+
+async function extractTextFromPdf(file: File): Promise<string> {
+  const pdfjsLib = await import('pdfjs-dist');
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+  let fullText = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const textContent = await page.getTextContent();
+    const pageText = textContent.items
+      .map((item) => ('str' in item ? (item as { str: string }).str : ''))
+      .join(' ');
+    fullText += pageText + '\n\n';
+  }
+
+  return fullText.trim();
+}
 
 export default function VocabularyPage() {
   const [view, setView] = useState<View>('categories');
@@ -21,21 +42,39 @@ export default function VocabularyPage() {
   const [reviewWords, setReviewWords] = useState<VocabularyWord[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
-  const { recordReview, wordProgress } = useDeutschStore();
+  const { recordReview, wordProgress, settings, customCategories, addCustomCategory, removeCustomCategory } = useDeutschStore();
   const { dueWords, newWords, stats } = useSpacedRepetition(selectedCategory ?? undefined);
   const { speak } = useSpeech();
   const { t, lang, getTranslation, getExampleTranslation } = useLanguage();
 
-  const startReview = useCallback((category: string) => {
-    setSelectedCategory(category);
-    const cat = vocabularyCategories.find((c) => c.id === category);
-    if (!cat) return;
-    const words = cat.words.slice(0, 10);
-    setReviewWords(words);
-    setCurrentIndex(0);
-    setShowAnswer(false);
-    setView('flashcard');
-  }, []);
+  // PDF import state
+  const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
+  const [pdfImporting, setPdfImporting] = useState(false);
+  const [pdfStatus, setPdfStatus] = useState('');
+  const [pdfResult, setPdfResult] = useState<{ categoryName: string; categoryNameTr: string; categoryNameEn?: string; words: VocabularyWord[] } | null>(null);
+  const [pdfError, setPdfError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const startReview = useCallback((categoryId: string) => {
+    setSelectedCategory(categoryId);
+    // Check built-in categories first
+    const builtIn = vocabularyCategories.find((c) => c.id === categoryId);
+    if (builtIn) {
+      setReviewWords(builtIn.words.slice(0, 10));
+      setCurrentIndex(0);
+      setShowAnswer(false);
+      setView('flashcard');
+      return;
+    }
+    // Check custom categories
+    const custom = customCategories.find((c) => c.id === categoryId);
+    if (custom) {
+      setReviewWords(custom.words.slice(0, 10));
+      setCurrentIndex(0);
+      setShowAnswer(false);
+      setView('flashcard');
+    }
+  }, [customCategories]);
 
   const handleRate = useCallback((quality: number) => {
     if (!reviewWords[currentIndex]) return;
@@ -47,6 +86,119 @@ export default function VocabularyPage() {
       setView('categories');
     }
   }, [currentIndex, reviewWords, recordReview]);
+
+  const handlePdfSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!settings.anthropicApiKey) {
+      setPdfError(t('vocab.noApiKey'));
+      return;
+    }
+
+    setPdfImporting(true);
+    setPdfError('');
+    setPdfResult(null);
+
+    try {
+      // Step 1: Extract text from PDF
+      setPdfStatus(t('vocab.extractingText'));
+      const text = await extractTextFromPdf(file);
+
+      if (!text || text.trim().length < 10) {
+        setPdfError(t('vocab.importError'));
+        setPdfImporting(false);
+        return;
+      }
+
+      // Step 2: Send to Claude for analysis
+      setPdfStatus(t('vocab.analyzingWords'));
+      const response = await fetch('/api/analyze-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text,
+          level: settings.currentLevel,
+          apiKey: settings.anthropicApiKey,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('API error');
+      }
+
+      const data = await response.json();
+      const analysis = data.analysis;
+
+      if (!analysis?.words || analysis.words.length === 0) {
+        setPdfError(t('vocab.noWordsFound'));
+        setPdfImporting(false);
+        return;
+      }
+
+      // Transform words to VocabularyWord format
+      const categoryId = `pdf-${Date.now()}`;
+      const words: VocabularyWord[] = analysis.words.map((w: Record<string, unknown>, i: number) => ({
+        id: `${categoryId}-${i}`,
+        german: (w.german as string) || '',
+        turkish: (w.turkish as string) || '',
+        english: (w.english as string) || '',
+        article: (['der', 'die', 'das', 'die (pl)'].includes(w.article as string) ? w.article : null) as VocabularyWord['article'],
+        plural: (w.plural as string) || undefined,
+        partOfSpeech: (w.partOfSpeech as VocabularyWord['partOfSpeech']) || 'noun',
+        emoji: (w.emoji as string) || undefined,
+        exampleSentence: (w.exampleSentence as string) || '',
+        exampleTranslation: (w.exampleTranslation as string) || '',
+        exampleTranslationEn: (w.exampleTranslationEn as string) || '',
+        category: categoryId,
+        level: (['A1', 'A2', 'B1', 'B2'].includes(w.level as string) ? w.level : settings.currentLevel) as CEFRLevel,
+        tags: (w.tags as string[]) || [],
+      }));
+
+      setPdfResult({
+        categoryName: analysis.categoryName || 'PDF Import',
+        categoryNameTr: analysis.categoryNameTr || 'PDF İçe Aktarma',
+        categoryNameEn: analysis.categoryNameEn || 'PDF Import',
+        words,
+      });
+    } catch (err) {
+      setPdfError(t('vocab.importError'));
+    } finally {
+      setPdfImporting(false);
+      setPdfStatus('');
+    }
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [settings.anthropicApiKey, settings.currentLevel, t]);
+
+  const handleAddToVocabulary = useCallback(() => {
+    if (!pdfResult) return;
+
+    const categoryId = `pdf-${Date.now()}`;
+    const category: CustomVocabularyCategory = {
+      id: categoryId,
+      name: pdfResult.categoryName,
+      turkishName: pdfResult.categoryNameTr,
+      englishName: pdfResult.categoryNameEn,
+      icon: '📄',
+      words: pdfResult.words.map((w) => ({ ...w, category: categoryId })),
+      level: settings.currentLevel as CEFRLevel,
+      importedAt: new Date().toISOString(),
+      source: 'pdf',
+    };
+
+    addCustomCategory(category);
+    setPdfResult(null);
+    setPdfDialogOpen(false);
+  }, [pdfResult, settings.currentLevel, addCustomCategory]);
+
+  const handleDeleteCustomCategory = useCallback((e: React.MouseEvent, categoryId: string) => {
+    e.stopPropagation();
+    removeCustomCategory(categoryId);
+  }, [removeCustomCategory]);
 
   const currentWord = reviewWords[currentIndex];
 
@@ -132,7 +284,17 @@ export default function VocabularyPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
-      <h1 className="text-2xl font-bold">{t('vocab.title')}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">{t('vocab.title')}</h1>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => { setPdfDialogOpen(true); setPdfResult(null); setPdfError(''); }}
+        >
+          <FileUp className="mr-1.5 h-4 w-4" />
+          {t('vocab.importPdf')}
+        </Button>
+      </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Card>
@@ -161,6 +323,7 @@ export default function VocabularyPage() {
         </Card>
       </div>
 
+      {/* Built-in categories */}
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {vocabularyCategories.map((cat) => {
           const learnedCount = cat.words.filter((w) => wordProgress[w.id] && wordProgress[w.id].status !== 'new').length;
@@ -182,6 +345,145 @@ export default function VocabularyPage() {
           );
         })}
       </div>
+
+      {/* Custom (imported) categories */}
+      {customCategories.length > 0 && (
+        <>
+          <h2 className="text-lg font-semibold mt-6">{t('vocab.customCategories')}</h2>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            {customCategories.map((cat) => {
+              const learnedCount = cat.words.filter((w) => wordProgress[w.id] && wordProgress[w.id].status !== 'new').length;
+              return (
+                <Card key={cat.id} className="cursor-pointer transition-colors hover:bg-accent" onClick={() => startReview(cat.id)}>
+                  <CardContent className="flex items-center gap-4 p-4">
+                    <span className="text-3xl">{cat.icon}</span>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium">{cat.name}</p>
+                        <Badge variant="secondary" className="text-[10px]">{t('vocab.imported')}</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{lang === 'en' ? (cat.englishName || cat.turkishName) : cat.turkishName}</p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <Progress value={cat.words.length > 0 ? (learnedCount / cat.words.length) * 100 : 0} className="h-1.5 flex-1" />
+                        <span className="text-xs text-muted-foreground">{learnedCount}/{cat.words.length}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                        onClick={(e) => handleDeleteCustomCategory(e, cat.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {/* PDF Import Dialog */}
+      <Dialog open={pdfDialogOpen} onOpenChange={setPdfDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              {t('vocab.pdfImport')}
+            </DialogTitle>
+            <DialogDescription>{t('vocab.importPdfDesc')}</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* File input */}
+            {!pdfResult && (
+              <div className="flex flex-col items-center gap-3">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf"
+                  onChange={handlePdfSelect}
+                  className="hidden"
+                  id="pdf-upload"
+                />
+                <label
+                  htmlFor="pdf-upload"
+                  className={`flex w-full cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed p-8 transition-colors ${
+                    pdfImporting ? 'border-muted cursor-not-allowed' : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-accent/50'
+                  }`}
+                >
+                  {pdfImporting ? (
+                    <>
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      <p className="text-sm font-medium">{pdfStatus}</p>
+                    </>
+                  ) : (
+                    <>
+                      <FileUp className="h-8 w-8 text-muted-foreground" />
+                      <p className="text-sm font-medium">{t('vocab.selectPdf')}</p>
+                      <p className="text-xs text-muted-foreground">PDF</p>
+                    </>
+                  )}
+                </label>
+              </div>
+            )}
+
+            {/* Error */}
+            {pdfError && (
+              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                {pdfError}
+              </div>
+            )}
+
+            {/* Results preview */}
+            {pdfResult && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Check className="h-5 w-5 text-green-500" />
+                  <p className="text-sm font-medium">
+                    {pdfResult.words.length} {t('vocab.wordsFound')}
+                  </p>
+                </div>
+
+                <div className="rounded-md border p-3">
+                  <p className="text-sm font-medium mb-1">{pdfResult.categoryName}</p>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    {lang === 'en' ? (pdfResult.categoryNameEn || pdfResult.categoryNameTr) : pdfResult.categoryNameTr}
+                  </p>
+                  <div className="max-h-48 space-y-1.5 overflow-y-auto">
+                    {pdfResult.words.map((word, i) => (
+                      <div key={i} className="flex items-center justify-between text-sm">
+                        <span className="font-medium">
+                          {word.emoji && `${word.emoji} `}
+                          {word.article ? `${word.article} ` : ''}{word.german}
+                        </span>
+                        <span className="text-muted-foreground text-xs">
+                          {getTranslation(word)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPdfDialogOpen(false)}>
+              {t('vocab.cancel')}
+            </Button>
+            {pdfResult && (
+              <Button onClick={handleAddToVocabulary}>
+                {t('vocab.addToVocabulary')}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

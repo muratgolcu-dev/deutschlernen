@@ -113,8 +113,10 @@ export const vocabularyCategories: VocabularyCategory[] = [
 
 export const allVocabularyWords = vocabularyCategories.flatMap((c) => c.words);
 
-export function getWordById(id: string) {
-  return allVocabularyWords.find((w) => w.id === id);
+export function getWordById(id: string, customWords?: import('@/lib/types').VocabularyWord[]) {
+  const found = allVocabularyWords.find((w) => w.id === id);
+  if (found) return found;
+  return customWords?.find((w) => w.id === id);
 }
 
 export function getWordsByCategory(categoryId: string) {

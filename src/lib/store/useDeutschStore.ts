@@ -13,6 +13,7 @@ import {
   DailyChallenge,
   UserSettings,
   CEFRLevel,
+  CustomVocabularyCategory,
 } from '@/lib/types';
 
 const RANKS = [
@@ -52,6 +53,7 @@ interface DeutschState {
   conversations: Conversation[];
   activeConversationId: string | null;
   notebookPages: NotebookPageMeta[];
+  customCategories: CustomVocabularyCategory[];
   dailyActivities: Record<string, DailyActivity>;
   settings: UserSettings;
   xp: number;
@@ -76,6 +78,8 @@ interface DeutschState {
   addNotebookPage: (page: NotebookPageMeta) => void;
   updateNotebookPage: (id: string, updates: Partial<NotebookPageMeta>) => void;
   deleteNotebookPage: (id: string) => void;
+  addCustomCategory: (category: CustomVocabularyCategory) => void;
+  removeCustomCategory: (id: string) => void;
   recordActivity: (updates: Partial<DailyActivity>) => void;
   addXP: (amount: number) => void;
   checkBadges: () => void;
@@ -136,6 +140,7 @@ export const useDeutschStore = create<DeutschState>()(
       conversations: [],
       activeConversationId: null,
       notebookPages: [],
+      customCategories: [],
       dailyActivities: {},
       settings: defaultSettings,
       xp: 0,
@@ -339,6 +344,16 @@ export const useDeutschStore = create<DeutschState>()(
         notebookPages: state.notebookPages.filter((p) => p.id !== id),
       })),
 
+      addCustomCategory: (category) => {
+        set((state) => ({ customCategories: [category, ...state.customCategories] }));
+        get().addXP(25);
+        get().checkBadges();
+      },
+
+      removeCustomCategory: (id) => set((state) => ({
+        customCategories: state.customCategories.filter((c) => c.id !== id),
+      })),
+
       recordActivity: (updates) => {
         const today = getTodayStr();
         set((state) => {
@@ -441,7 +456,7 @@ export const useDeutschStore = create<DeutschState>()(
 
       resetAllData: () => set({
         wordProgress: {}, lessonProgress: {}, grammarMistakes: {}, conversations: [],
-        activeConversationId: null, notebookPages: [], dailyActivities: {},
+        activeConversationId: null, notebookPages: [], customCategories: [], dailyActivities: {},
         settings: defaultSettings, xp: 0, rank: 'Anfänger', badges: initialBadges,
         dailyChallenge: defaultDailyChallenge, showLevelUp: false, lastXPGain: null,
       }),
@@ -452,6 +467,7 @@ export const useDeutschStore = create<DeutschState>()(
           wordProgress: state.wordProgress, lessonProgress: state.lessonProgress,
           grammarMistakes: state.grammarMistakes,
           conversations: state.conversations, notebookPages: state.notebookPages,
+          customCategories: state.customCategories,
           dailyActivities: state.dailyActivities, settings: state.settings,
           xp: state.xp, rank: state.rank, badges: state.badges,
         });
@@ -464,6 +480,7 @@ export const useDeutschStore = create<DeutschState>()(
             wordProgress: data.wordProgress || {}, lessonProgress: data.lessonProgress || {},
             grammarMistakes: data.grammarMistakes || {},
             conversations: data.conversations || [], notebookPages: data.notebookPages || [],
+            customCategories: data.customCategories || [],
             dailyActivities: data.dailyActivities || {}, settings: { ...defaultSettings, ...data.settings },
             xp: data.xp || 0, rank: data.rank || 'Anfänger', badges: { ...initialBadges, ...data.badges },
           });

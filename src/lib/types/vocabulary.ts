@@ -60,3 +60,15 @@ export interface ReviewResult {
   correct: boolean;
   timeSpent: number;
 }
+
+export interface CustomVocabularyCategory {
+  id: string;
+  name: string;
+  turkishName: string;
+  englishName?: string;
+  icon: string;
+  words: VocabularyWord[];
+  level: CEFRLevel;
+  importedAt: string;
+  source: 'pdf' | 'manual';
+}
