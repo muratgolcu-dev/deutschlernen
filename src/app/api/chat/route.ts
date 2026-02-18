@@ -2,11 +2,11 @@ import { NextRequest } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, systemPrompt } = await request.json();
+    const { messages, systemPrompt, apiKey: clientApiKey } = await request.json();
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = clientApiKey || process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'API anahtarı yapılandırılmamış' }), {
+      return new Response(JSON.stringify({ error: 'API anahtarı yapılandırılmamış. Lütfen Ayarlar sayfasından API anahtarınızı girin.' }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
       });
