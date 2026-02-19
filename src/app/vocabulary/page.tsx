@@ -28,8 +28,11 @@ async function extractTextFromPdf(file: File): Promise<string> {
     const page = await pdf.getPage(i);
     const textContent = await page.getTextContent();
     const pageText = textContent.items
-      .filter((item): item is { str: string; hasEOL?: boolean } => 'str' in item)
-      .map((item) => item.str + (item.hasEOL ? '\n' : ''))
+      .filter((item) => 'str' in item)
+      .map((item) => {
+        const textItem = item as { str: string; hasEOL?: boolean };
+        return textItem.str + (textItem.hasEOL ? '\n' : '');
+      })
       .join('');
     fullText += pageText + '\n\n';
   }
