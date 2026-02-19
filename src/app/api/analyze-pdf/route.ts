@@ -86,17 +86,21 @@ Yanıtını şu JSON formatında ver (başka bir şey yazma, sadece JSON):
 
     try {
       const jsonMatch = content.match(/\{[\s\S]*\}/);
-      const analysis = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(content);
+      if (!jsonMatch) {
+        console.error('No JSON found in Claude response:', content.substring(0, 500));
+        return NextResponse.json(
+          { error: 'API yanıtından JSON çıkarılamadı' },
+          { status: 502 }
+        );
+      }
+      const analysis = JSON.parse(jsonMatch[0]);
       return NextResponse.json({ analysis });
-    } catch {
-      return NextResponse.json({
-        analysis: {
-          categoryName: 'PDF Import',
-          categoryNameTr: 'PDF İçe Aktarma',
-          categoryNameEn: 'PDF Import',
-          words: [],
-        },
-      });
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError, 'Response:', content.substring(0, 500));
+      return NextResponse.json(
+        { error: 'API yanıtı geçerli JSON formatında değil' },
+        { status: 502 }
+      );
     }
   } catch (error) {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });

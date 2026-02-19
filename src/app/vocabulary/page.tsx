@@ -28,12 +28,14 @@ async function extractTextFromPdf(file: File): Promise<string> {
     const page = await pdf.getPage(i);
     const textContent = await page.getTextContent();
     const pageText = textContent.items
-      .map((item) => ('str' in item ? (item as { str: string }).str : ''))
-      .join(' ');
+      .filter((item): item is { str: string; hasEOL?: boolean } => 'str' in item)
+      .map((item) => item.str + (item.hasEOL ? '\n' : ''))
+      .join('');
     fullText += pageText + '\n\n';
   }
 
-  return fullText.trim();
+  // Clean up excessive whitespace while preserving paragraph breaks
+  return fullText.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
 }
 
 export default function VocabularyPage() {

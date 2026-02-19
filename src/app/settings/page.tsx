@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { CEFRLevel } from '@/lib/types';
 import { NativeLanguage } from '@/lib/types/settings';
-import { Download, Upload, Trash2, Key } from 'lucide-react';
+import { Download, Upload, Trash2, Key, Eye, EyeOff } from 'lucide-react';
 
 const BADGES_INFO: Record<string, { icon: string }> = {
   'erste-schritte': { icon: '🎯' },
@@ -37,6 +37,7 @@ export default function SettingsPage() {
   const { voices } = useSpeech();
   const { t, lang, setLanguage } = useLanguage();
   const [importText, setImportText] = useState('');
+  const [showApiKey, setShowApiKey] = useState(false);
 
   const handleExport = () => {
     const data = exportData();
@@ -169,11 +170,22 @@ export default function SettingsPage() {
               <Key className="h-3.5 w-3.5" />
               {t('settings.apiKey')}
             </Label>
-            <Input
-              placeholder={t('settings.apiKeyPlaceholder')}
-              value={settings.anthropicApiKey ?? ''}
-              onChange={(e) => updateSettings({ anthropicApiKey: e.target.value })}
-            />
+            <div className="relative">
+              <Input
+                type={showApiKey ? 'text' : 'password'}
+                placeholder={t('settings.apiKeyPlaceholder')}
+                value={settings.anthropicApiKey ?? ''}
+                onChange={(e) => updateSettings({ anthropicApiKey: e.target.value })}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowApiKey(!showApiKey)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
             <p className="text-xs text-muted-foreground">{t('settings.apiKeyDesc')}</p>
           </div>
 
