@@ -96,6 +96,12 @@ export default function VocabularyPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // 50MB file size limit
+    if (file.size > 50 * 1024 * 1024) {
+      setPdfError(t('vocab.fileTooLarge'));
+      return;
+    }
+
     if (!settings.anthropicApiKey) {
       setPdfError(t('vocab.noApiKey'));
       return;
@@ -430,7 +436,7 @@ export default function VocabularyPage() {
                     <>
                       <FileUp className="h-8 w-8 text-muted-foreground" />
                       <p className="text-sm font-medium">{t('vocab.selectPdf')}</p>
-                      <p className="text-xs text-muted-foreground">PDF</p>
+                      <p className="text-xs text-muted-foreground">PDF (maks. 50MB)</p>
                     </>
                   )}
                 </label>
