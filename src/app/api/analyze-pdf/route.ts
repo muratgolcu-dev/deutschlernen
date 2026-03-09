@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const maxDuration = 60;
+
 export async function POST(request: NextRequest) {
   try {
     const { text, level, apiKey } = await request.json();
@@ -51,7 +53,7 @@ Yanıtını şu JSON formatında ver (başka bir şey yazma, sadece JSON):
 }`;
 
     // Truncate text if too long (Claude has token limits)
-    const truncatedText = text.length > 15000 ? text.substring(0, 15000) + '\n\n[Metin kısaltıldı...]' : text;
+    const truncatedText = text.length > 50000 ? text.substring(0, 50000) + '\n\n[Metin kısaltıldı...]' : text;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',

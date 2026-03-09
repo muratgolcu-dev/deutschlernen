@@ -62,6 +62,7 @@ const translations = {
   'vocab.importError': { tr: 'PDF analiz edilemedi', en: 'Could not analyze PDF' },
   'vocab.noApiKey': { tr: 'Ayarlardan API anahtarı ekleyin', en: 'Add API key from Settings' },
   'vocab.noWordsFound': { tr: 'Kelime bulunamadı', en: 'No words found' },
+  'vocab.fileTooLarge': { tr: 'Dosya çok büyük (maks. 50MB)', en: 'File too large (max 50MB)' },
   'vocab.imported': { tr: 'İçe Aktarılan', en: 'Imported' },
   'vocab.deleteCategory': { tr: 'Kategoriyi Sil', en: 'Delete Category' },
   'vocab.pdfImport': { tr: 'PDF İçe Aktarma', en: 'PDF Import' },

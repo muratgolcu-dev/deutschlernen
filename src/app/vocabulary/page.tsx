@@ -96,6 +96,12 @@ export default function VocabularyPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // 50MB file size limit
+    if (file.size > 50 * 1024 * 1024) {
+      setPdfError(t('vocab.fileTooLarge'));
+      return;
+    }
+
     if (!settings.anthropicApiKey) {
       setPdfError(t('vocab.noApiKey'));
       return;
@@ -116,13 +122,16 @@ export default function VocabularyPage() {
         return;
       }
 
-      // Step 2: Send to Claude for analysis
+      // Step 2: Truncate text client-side to avoid body size limits
+      const truncatedText = text.length > 50000 ? text.substring(0, 50000) : text;
+
+      // Step 3: Send to Claude for analysis
       setPdfStatus(t('vocab.analyzingWords'));
       const response = await fetch('/api/analyze-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          text,
+          text: truncatedText,
           level: settings.currentLevel,
           apiKey: settings.anthropicApiKey,
         }),
@@ -167,6 +176,7 @@ export default function VocabularyPage() {
         words,
       });
     } catch (err) {
+      console.error('PDF import error:', err);
       setPdfError(t('vocab.importError'));
     } finally {
       setPdfImporting(false);
@@ -430,7 +440,7 @@ export default function VocabularyPage() {
                     <>
                       <FileUp className="h-8 w-8 text-muted-foreground" />
                       <p className="text-sm font-medium">{t('vocab.selectPdf')}</p>
-                      <p className="text-xs text-muted-foreground">PDF</p>
+                      <p className="text-xs text-muted-foreground">PDF (maks. 50MB)</p>
                     </>
                   )}
                 </label>
