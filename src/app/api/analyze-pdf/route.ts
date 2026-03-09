@@ -77,8 +77,17 @@ Yanıtını şu JSON formatında ver (başka bir şey yazma, sadece JSON):
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Anthropic API error:', response.status, errorText);
+
+      if (response.status === 401) {
+        return NextResponse.json(
+          { error: 'API anahtarı geçersiz. Lütfen Ayarlar sayfasından API anahtarınızı kontrol edin.' },
+          { status: 401 }
+        );
+      }
+
       return NextResponse.json(
-        { error: `API hatası: ${response.status}` },
+        { error: `Anthropic API hatası (${response.status}): ${errorText.substring(0, 200)}` },
         { status: response.status }
       );
     }
