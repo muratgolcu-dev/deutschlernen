@@ -2,6 +2,47 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
 
+function tryFixAndParseJSON(raw: string): Record<string, unknown> | null {
+  // 1. Try direct parse
+  try {
+    return JSON.parse(raw);
+  } catch { /* continue */ }
+
+  // 2. Extract JSON from markdown code block
+  const codeBlockMatch = raw.match(/```(?:json)?\s*\n?([\s\S]*?)```/);
+  if (codeBlockMatch) {
+    try {
+      return JSON.parse(codeBlockMatch[1].trim());
+    } catch { /* continue */ }
+  }
+
+  // 3. Extract outermost { ... }
+  const braceMatch = raw.match(/\{[\s\S]*\}/);
+  if (braceMatch) {
+    try {
+      return JSON.parse(braceMatch[0]);
+    } catch { /* continue */ }
+
+    // 4. Try to fix truncated JSON (close open arrays/objects)
+    let fixed = braceMatch[0];
+    // Remove trailing comma before attempting to close
+    fixed = fixed.replace(/,\s*$/, '');
+    // Count open/close braces and brackets
+    const openBraces = (fixed.match(/\{/g) || []).length;
+    const closeBraces = (fixed.match(/\}/g) || []).length;
+    const openBrackets = (fixed.match(/\[/g) || []).length;
+    const closeBrackets = (fixed.match(/\]/g) || []).length;
+    // Try to close them
+    fixed += ']'.repeat(Math.max(0, openBrackets - closeBrackets));
+    fixed += '}'.repeat(Math.max(0, openBraces - closeBraces));
+    try {
+      return JSON.parse(fixed);
+    } catch { /* give up */ }
+  }
+
+  return null;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { text, level, apiKey } = await request.json();
@@ -26,31 +67,11 @@ Kurallar:
 - Her kelime için bir örnek cümle ve çevirisi yaz
 - Kelime seviyesini belirle (A1, A2, B1, B2)
 - Bir kategori adı öner (Almanca ve Türkçe)
-- Maksimum 30 kelime çıkar, en önemlilerini seç
+- Maksimum 20 kelime çıkar, en önemlilerini seç
 - Mümkünse emoji ekle
 
-Yanıtını şu JSON formatında ver (başka bir şey yazma, sadece JSON):
-{
-  "categoryName": "Kategori Adı (Almanca)",
-  "categoryNameTr": "Kategori Adı (Türkçe)",
-  "categoryNameEn": "Category Name (English)",
-  "words": [
-    {
-      "german": "kelime",
-      "turkish": "Türkçe çeviri",
-      "english": "English translation",
-      "article": "der/die/das/die (pl) veya null",
-      "plural": "çoğul hali veya null",
-      "partOfSpeech": "noun/verb/adjective/adverb/preposition/conjunction/pronoun/phrase",
-      "emoji": "uygun emoji",
-      "exampleSentence": "Almanca örnek cümle",
-      "exampleTranslation": "Türkçe çeviri",
-      "exampleTranslationEn": "English translation",
-      "level": "A1/A2/B1/B2",
-      "tags": ["etiket1", "etiket2"]
-    }
-  ]
-}`;
+ÖNEMLI: Yanıtında SADECE JSON yaz. Açıklama, markdown veya başka metin ekleme. Sadece aşağıdaki formatta tek bir JSON objesi döndür:
+{"categoryName":"Almanca Ad","categoryNameTr":"Türkçe Ad","categoryNameEn":"English Name","words":[{"german":"kelime","turkish":"çeviri","english":"translation","article":"der/die/das/null","plural":"çoğul/null","partOfSpeech":"noun","emoji":"📚","exampleSentence":"Örnek cümle","exampleTranslation":"Türkçe çeviri","exampleTranslationEn":"English translation","level":"A1","tags":["etiket"]}]}`;
 
     // Truncate text if too long (Claude has token limits)
     const truncatedText = text.length > 50000 ? text.substring(0, 50000) + '\n\n[Metin kısaltıldı...]' : text;
@@ -64,12 +85,12 @@ Yanıtını şu JSON formatında ver (başka bir şey yazma, sadece JSON):
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5-20250929',
-        max_tokens: 4096,
+        max_tokens: 8192,
         system: systemPrompt,
         messages: [
           {
             role: 'user',
-            content: `Bu PDF metninden Almanca kelimeleri çıkar ve JSON formatında yanıt ver:\n\n${truncatedText}`,
+            content: `Bu PDF metninden Almanca kelimeleri çıkar. SADECE JSON döndür, başka bir şey yazma:\n\n${truncatedText}`,
           },
         ],
       }),
@@ -93,27 +114,31 @@ Yanıtını şu JSON formatında ver (başka bir şey yazma, sadece JSON):
     }
 
     const data = await response.json();
-    const content = data.content?.[0]?.text || '{}';
+    const content = data.content?.[0]?.text || '';
+    const stopReason = data.stop_reason;
 
-    try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        console.error('No JSON found in Claude response:', content.substring(0, 500));
-        return NextResponse.json(
-          { error: 'API yanıtından JSON çıkarılamadı' },
-          { status: 502 }
-        );
-      }
-      const analysis = JSON.parse(jsonMatch[0]);
-      return NextResponse.json({ analysis });
-    } catch (parseError) {
-      console.error('JSON parse error:', parseError, 'Response:', content.substring(0, 500));
+    if (!content) {
       return NextResponse.json(
-        { error: 'API yanıtı geçerli JSON formatında değil' },
+        { error: 'API boş yanıt döndürdü' },
         { status: 502 }
       );
     }
+
+    // Log for debugging
+    console.log(`Claude response: stop_reason=${stopReason}, length=${content.length}`);
+
+    const analysis = tryFixAndParseJSON(content);
+    if (!analysis) {
+      console.error('JSON parse failed. Response preview:', content.substring(0, 300));
+      return NextResponse.json(
+        { error: `API yanıtı JSON olarak ayrıştırılamadı (stop: ${stopReason})` },
+        { status: 502 }
+      );
+    }
+
+    return NextResponse.json({ analysis });
   } catch (error) {
+    console.error('Server error:', error);
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }

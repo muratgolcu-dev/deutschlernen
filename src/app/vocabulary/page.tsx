@@ -18,27 +18,43 @@ type View = 'categories' | 'category-words' | 'flashcard';
 
 async function extractTextFromPdf(file: File): Promise<string> {
   const pdfjsLib = await import('pdfjs-dist');
-  pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+
+  // Use CDN worker for production reliability (avoids Next.js static file serving issues)
+  const version = pdfjsLib.version;
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.min.mjs`;
 
   const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+  let pdf;
+  try {
+    pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  } catch (docError) {
+    console.error('PDF document load error:', docError);
+    // Fallback: try without worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+    pdf = await pdfjsLib.getDocument({ data: arrayBuffer, isEvalSupported: false }).promise;
+  }
 
   let fullText = '';
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const textContent = await page.getTextContent();
     const pageText = textContent.items
-      .filter((item) => 'str' in item)
-      .map((item) => {
-        const textItem = item as { str: string; hasEOL?: boolean };
-        return textItem.str + (textItem.hasEOL ? '\n' : '');
+      .filter((item: Record<string, unknown>) => 'str' in item)
+      .map((item: Record<string, unknown>) => {
+        return (item.str as string) + (item.hasEOL ? '\n' : '');
       })
       .join('');
     fullText += pageText + '\n\n';
   }
 
-  // Clean up excessive whitespace while preserving paragraph breaks
-  return fullText.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+  const cleaned = fullText.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+
+  if (!cleaned || cleaned.length < 5) {
+    throw new Error('PDF dosyasından metin çıkarılamadı. PDF görsel tabanlı olabilir.');
+  }
+
+  return cleaned;
 }
 
 export default function VocabularyPage() {
@@ -114,13 +130,24 @@ export default function VocabularyPage() {
     try {
       // Step 1: Extract text from PDF
       setPdfStatus(t('vocab.extractingText'));
-      const text = await extractTextFromPdf(file);
-
-      if (!text || text.trim().length < 10) {
-        setPdfError(t('vocab.importError'));
+      let text: string;
+      try {
+        text = await extractTextFromPdf(file);
+      } catch (extractErr) {
+        const msg = extractErr instanceof Error ? extractErr.message : String(extractErr);
+        console.error('PDF text extraction failed:', msg);
+        setPdfError(`PDF metin çıkarma hatası: ${msg}`);
         setPdfImporting(false);
         return;
       }
+
+      if (!text || text.trim().length < 10) {
+        setPdfError('PDF dosyasından yeterli metin çıkarılamadı. Lütfen metin içeren bir PDF deneyin.');
+        setPdfImporting(false);
+        return;
+      }
+
+      console.log(`PDF text extracted: ${text.length} chars from file "${file.name}"`);
 
       // Step 2: Truncate text client-side to avoid body size limits
       const truncatedText = text.length > 50000 ? text.substring(0, 50000) : text;
