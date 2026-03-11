@@ -19,9 +19,9 @@ type View = 'categories' | 'category-words' | 'flashcard';
 async function extractTextFromPdf(file: File): Promise<string> {
   const pdfjsLib = await import('pdfjs-dist');
 
-  // Use CDN worker for production reliability (avoids Next.js static file serving issues)
+  // Use jsdelivr CDN for worker (cdnjs doesn't have v5.x)
   const version = pdfjsLib.version;
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.min.mjs`;
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${version}/build/pdf.worker.min.mjs`;
 
   const arrayBuffer = await file.arrayBuffer();
 
