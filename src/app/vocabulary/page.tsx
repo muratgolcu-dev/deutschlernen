@@ -138,7 +138,9 @@ export default function VocabularyPage() {
       });
 
       if (!response.ok) {
-        throw new Error('API error');
+        const errData = await response.json().catch(() => ({}));
+        const detail = errData.error || `HTTP ${response.status}`;
+        throw new Error(detail);
       }
 
       const data = await response.json();
@@ -176,8 +178,9 @@ export default function VocabularyPage() {
         words,
       });
     } catch (err) {
-      console.error('PDF import error:', err);
-      setPdfError(t('vocab.importError'));
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.error('PDF import error:', errMsg);
+      setPdfError(`${t('vocab.importError')}: ${errMsg}`);
     } finally {
       setPdfImporting(false);
       setPdfStatus('');

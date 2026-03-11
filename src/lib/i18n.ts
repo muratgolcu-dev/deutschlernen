@@ -154,6 +154,8 @@ const translations = {
   'settings.apiKey': { tr: 'Anthropic API Anahtarı', en: 'Anthropic API Key' },
   'settings.apiKeyPlaceholder': { tr: 'sk-ant-...', en: 'sk-ant-...' },
   'settings.apiKeyDesc': { tr: 'PDF içe aktarma ve AI sohbet için gerekli', en: 'Required for PDF import and AI chat' },
+  'settings.apiKeySave': { tr: 'API Anahtarını Kaydet', en: 'Save API Key' },
+  'settings.apiKeySaved': { tr: 'Kaydedildi!', en: 'Saved!' },
   'settings.a1': { tr: 'A1 - Başlangıç', en: 'A1 - Beginner' },
   'settings.a2': { tr: 'A2 - Temel', en: 'A2 - Elementary' },
   'settings.b1': { tr: 'B1 - Orta', en: 'B1 - Intermediate' },

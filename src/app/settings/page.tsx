@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { CEFRLevel } from '@/lib/types';
 import { NativeLanguage } from '@/lib/types/settings';
-import { Download, Upload, Trash2, Key, Eye, EyeOff } from 'lucide-react';
+import { Download, Upload, Trash2, Key, Eye, EyeOff, Save, Check } from 'lucide-react';
 
 const BADGES_INFO: Record<string, { icon: string }> = {
   'erste-schritte': { icon: '🎯' },
@@ -38,6 +38,16 @@ export default function SettingsPage() {
   const { t, lang, setLanguage } = useLanguage();
   const [importText, setImportText] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
+  const [apiKeyDraft, setApiKeyDraft] = useState(settings.anthropicApiKey ?? '');
+  const [apiKeySaved, setApiKeySaved] = useState(false);
+
+  const handleSaveApiKey = () => {
+    updateSettings({ anthropicApiKey: apiKeyDraft });
+    setApiKeySaved(true);
+    setTimeout(() => setApiKeySaved(false), 2000);
+  };
+
+  const apiKeyChanged = apiKeyDraft !== (settings.anthropicApiKey ?? '');
 
   const handleExport = () => {
     const data = exportData();
@@ -174,8 +184,8 @@ export default function SettingsPage() {
               <Input
                 type={showApiKey ? 'text' : 'password'}
                 placeholder={t('settings.apiKeyPlaceholder')}
-                value={settings.anthropicApiKey ?? ''}
-                onChange={(e) => updateSettings({ anthropicApiKey: e.target.value })}
+                value={apiKeyDraft}
+                onChange={(e) => setApiKeyDraft(e.target.value)}
                 className="pr-10"
               />
               <button
@@ -186,6 +196,19 @@ export default function SettingsPage() {
                 {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            <Button
+              variant={apiKeySaved ? 'default' : 'outline'}
+              size="sm"
+              className="w-full gap-2"
+              onClick={handleSaveApiKey}
+              disabled={!apiKeyChanged && !apiKeySaved}
+            >
+              {apiKeySaved ? (
+                <><Check className="h-4 w-4" /> {t('settings.apiKeySaved')}</>
+              ) : (
+                <><Save className="h-4 w-4" /> {t('settings.apiKeySave')}</>
+              )}
+            </Button>
             <p className="text-xs text-muted-foreground">{t('settings.apiKeyDesc')}</p>
           </div>
 
