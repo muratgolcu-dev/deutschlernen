@@ -11,6 +11,13 @@ import { shoppingWords } from './shopping';
 import { bodyWords } from './body';
 import { homeWords } from './home';
 import { natureWords } from './nature';
+import { educationWords } from './education';
+import { emotionsWords } from './emotions';
+import { clothingWords } from './clothing';
+import { transportWords } from './transport';
+import { technologyWords } from './technology';
+import { verbsWords } from './verbs';
+import { adjectivesWords } from './adjectives';
 
 export const vocabularyCategories: VocabularyCategory[] = [
   {
@@ -108,6 +115,62 @@ export const vocabularyCategories: VocabularyCategory[] = [
     englishName: 'Nature & Weather',
     icon: '🌿',
     words: natureWords,
+  },
+  {
+    id: 'education',
+    name: 'Bildung & Schule',
+    turkishName: 'Eğitim ve Okul',
+    englishName: 'Education & School',
+    icon: '🎓',
+    words: educationWords,
+  },
+  {
+    id: 'emotions',
+    name: 'Gefühle & Emotionen',
+    turkishName: 'Duygular',
+    englishName: 'Feelings & Emotions',
+    icon: '😊',
+    words: emotionsWords,
+  },
+  {
+    id: 'clothing',
+    name: 'Kleidung',
+    turkishName: 'Giyim',
+    englishName: 'Clothing',
+    icon: '👔',
+    words: clothingWords,
+  },
+  {
+    id: 'transport',
+    name: 'Verkehrsmittel',
+    turkishName: 'Ulaşım',
+    englishName: 'Transport',
+    icon: '🚌',
+    words: transportWords,
+  },
+  {
+    id: 'technology',
+    name: 'Technologie',
+    turkishName: 'Teknoloji',
+    englishName: 'Technology',
+    icon: '💻',
+    words: technologyWords,
+  },
+  {
+    id: 'verbs',
+    name: 'Wichtige Verben',
+    turkishName: 'Önemli Fiiller',
+    englishName: 'Important Verbs',
+    icon: '🔵',
+    words: verbsWords,
+  },
+  {
+    id: 'adjectives',
+    name: 'Adjektive',
+    turkishName: 'Sıfatlar',
+    englishName: 'Adjectives',
+    icon: '🎨',
+    words: adjectivesWords,
   },
 ];
 
