@@ -149,7 +149,7 @@ export default function VocabularyPage() {
 
       console.log(`PDF text extracted: ${text.length} chars from file "${file.name}"`);
 
-      // Step 2: Send to Claude for analysis (server handles truncation)
+      // Step 2: Send full text to API (server handles chunking and extraction)
       setPdfStatus(t('vocab.analyzingWords'));
       const response = await fetch('/api/analyze-pdf', {
         method: 'POST',
@@ -158,7 +158,6 @@ export default function VocabularyPage() {
           text,
           level: settings.currentLevel,
           apiKey: settings.anthropicApiKey,
-          wordLimit: 50,
         }),
       });
 
