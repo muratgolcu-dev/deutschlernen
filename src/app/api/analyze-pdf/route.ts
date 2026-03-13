@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 function tryFixAndParseJSON(raw: string): Record<string, unknown> | null {
   // 1. Try direct parse
@@ -45,7 +45,8 @@ function tryFixAndParseJSON(raw: string): Record<string, unknown> | null {
 
 export async function POST(request: NextRequest) {
   try {
-    const { text, level, apiKey } = await request.json();
+    const requestBody = await request.json();
+    const { text, level, apiKey } = requestBody;
 
     if (!apiKey) {
       return NextResponse.json({ error: 'API anahtarı gerekli' }, { status: 400 });
@@ -55,26 +56,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'PDF metni çok kısa veya boş' }, { status: 400 });
     }
 
+    const wordLimit = typeof requestBody.wordLimit === 'number' ? Math.min(requestBody.wordLimit, 100) : 50;
+
     const systemPrompt = `Sen bir Almanca kelime çıkarma asistanısın. Öğrenci ${level || 'A1'} seviyesinde Türk bir öğrenci.
 
-Sana bir PDF'den çıkarılmış metin verilecek. Bu metinden Almanca kelimeleri çıkar ve yapılandırılmış bir kelime listesi oluştur.
+Sana bir PDF'den çıkarılmış metin verilecek. Bu metinden TÜM Almanca kelimeleri çıkar ve yapılandırılmış bir kelime listesi oluştur.
 
 Kurallar:
-- Sadece anlamlı Almanca kelimeleri çıkar (artikeller, bağlaçlar tek başına değil)
+- Metindeki TÜM anlamlı Almanca kelimeleri çıkar (artikeller, bağlaçlar tek başına değil)
+- Tekrar eden kelimeleri sadece bir kez ekle
 - Her kelime için Türkçe ve İngilizce çeviri ver
 - Artikelleri doğru belirle (der/die/das/die (pl) veya null)
 - Kelime türünü belirle (noun, verb, adjective, adverb, preposition, conjunction, pronoun, phrase)
 - Her kelime için bir örnek cümle ve çevirisi yaz
 - Kelime seviyesini belirle (A1, A2, B1, B2)
 - Bir kategori adı öner (Almanca ve Türkçe)
-- Maksimum 20 kelime çıkar, en önemlilerini seç
+- Maksimum ${wordLimit} kelime çıkar, mümkün olduğunca çok kelime bul
 - Mümkünse emoji ekle
 
 ÖNEMLI: Yanıtında SADECE JSON yaz. Açıklama, markdown veya başka metin ekleme. Sadece aşağıdaki formatta tek bir JSON objesi döndür:
 {"categoryName":"Almanca Ad","categoryNameTr":"Türkçe Ad","categoryNameEn":"English Name","words":[{"german":"kelime","turkish":"çeviri","english":"translation","article":"der/die/das/null","plural":"çoğul/null","partOfSpeech":"noun","emoji":"📚","exampleSentence":"Örnek cümle","exampleTranslation":"Türkçe çeviri","exampleTranslationEn":"English translation","level":"A1","tags":["etiket"]}]}`;
 
-    // Truncate text if too long (Claude has token limits)
-    const truncatedText = text.length > 50000 ? text.substring(0, 50000) + '\n\n[Metin kısaltıldı...]' : text;
+    // Allow longer text for better word extraction (Claude supports large contexts)
+    const maxTextLength = 100000;
+    const truncatedText = text.length > maxTextLength ? text.substring(0, maxTextLength) + '\n\n[Metin kısaltıldı...]' : text;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -85,7 +90,7 @@ Kurallar:
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5-20250929',
-        max_tokens: 8192,
+        max_tokens: 16384,
         system: systemPrompt,
         messages: [
           {

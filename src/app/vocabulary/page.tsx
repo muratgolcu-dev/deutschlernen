@@ -81,7 +81,7 @@ export default function VocabularyPage() {
     // Check built-in categories first
     const builtIn = vocabularyCategories.find((c) => c.id === categoryId);
     if (builtIn) {
-      setReviewWords(builtIn.words.slice(0, 10));
+      setReviewWords(builtIn.words);
       setCurrentIndex(0);
       setShowAnswer(false);
       setView('flashcard');
@@ -90,7 +90,7 @@ export default function VocabularyPage() {
     // Check custom categories
     const custom = customCategories.find((c) => c.id === categoryId);
     if (custom) {
-      setReviewWords(custom.words.slice(0, 10));
+      setReviewWords(custom.words);
       setCurrentIndex(0);
       setShowAnswer(false);
       setView('flashcard');
@@ -149,18 +149,16 @@ export default function VocabularyPage() {
 
       console.log(`PDF text extracted: ${text.length} chars from file "${file.name}"`);
 
-      // Step 2: Truncate text client-side to avoid body size limits
-      const truncatedText = text.length > 50000 ? text.substring(0, 50000) : text;
-
-      // Step 3: Send to Claude for analysis
+      // Step 2: Send to Claude for analysis (server handles truncation)
       setPdfStatus(t('vocab.analyzingWords'));
       const response = await fetch('/api/analyze-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          text: truncatedText,
+          text,
           level: settings.currentLevel,
           apiKey: settings.anthropicApiKey,
+          wordLimit: 50,
         }),
       });
 
