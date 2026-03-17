@@ -16,6 +16,15 @@ import { VocabularyWord, CustomVocabularyCategory, CEFRLevel } from '@/lib/types
 
 type View = 'categories' | 'category-words' | 'flashcard';
 
+const BATCH_SIZE = 50;
+
+const levelBadgeColors: Record<string, string> = {
+  A1: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
+  A2: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+  B1: 'bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300',
+  B2: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300',
+};
+
 async function extractTextFromPdf(file: File): Promise<string> {
   const pdfjsLib = await import('pdfjs-dist');
 
@@ -63,6 +72,10 @@ export default function VocabularyPage() {
   const [reviewWords, setReviewWords] = useState<VocabularyWord[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [allCategoryWords, setAllCategoryWords] = useState<VocabularyWord[]>([]);
+  const [batchOffset, setBatchOffset] = useState(0);
+  const [unknownWords, setUnknownWords] = useState<VocabularyWord[]>([]);
+  const [isReviewingUnknowns, setIsReviewingUnknowns] = useState(false);
   const { recordReview, wordProgress, settings, customCategories, addCustomCategory, removeCustomCategory } = useDeutschStore();
   const { dueWords, newWords, stats } = useSpacedRepetition(selectedCategory ?? undefined);
   const { speak } = useSpeech();
@@ -76,37 +89,82 @@ export default function VocabularyPage() {
   const [pdfError, setPdfError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const shuffle = useCallback((arr: VocabularyWord[]) => {
+    const shuffled = [...arr];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }, []);
+
   const startReview = useCallback((categoryId: string) => {
     setSelectedCategory(categoryId);
-    // Check built-in categories first
     const builtIn = vocabularyCategories.find((c) => c.id === categoryId);
-    if (builtIn) {
-      setReviewWords(builtIn.words);
-      setCurrentIndex(0);
-      setShowAnswer(false);
-      setView('flashcard');
-      return;
-    }
-    // Check custom categories
     const custom = customCategories.find((c) => c.id === categoryId);
-    if (custom) {
-      setReviewWords(custom.words);
-      setCurrentIndex(0);
-      setShowAnswer(false);
-      setView('flashcard');
-    }
-  }, [customCategories]);
+    const words = builtIn?.words || custom?.words || [];
+    if (words.length === 0) return;
+
+    const shuffled = shuffle(words);
+    setAllCategoryWords(shuffled);
+    setBatchOffset(0);
+    setUnknownWords([]);
+    setIsReviewingUnknowns(false);
+    const batch = shuffled.slice(0, BATCH_SIZE);
+    setReviewWords(batch);
+    setCurrentIndex(0);
+    setShowAnswer(false);
+    setView('flashcard');
+  }, [customCategories, shuffle]);
 
   const handleRate = useCallback((quality: number) => {
     if (!reviewWords[currentIndex]) return;
-    recordReview(reviewWords[currentIndex].id, quality);
+    const currentWord_ = reviewWords[currentIndex];
+    recordReview(currentWord_.id, quality);
+
+    const isUnknown = quality === 1 && !isReviewingUnknowns;
+
     if (currentIndex < reviewWords.length - 1) {
+      if (isUnknown) {
+        setUnknownWords((prev) => [...prev, currentWord_]);
+      }
       setCurrentIndex((i) => i + 1);
       setShowAnswer(false);
     } else {
-      setView('categories');
+      // Batch or round finished
+      if (isReviewingUnknowns) {
+        setView('categories');
+        return;
+      }
+
+      // Use callback to get latest unknowns (including this word if unknown)
+      setUnknownWords((prevUnknowns) => {
+        const allUnknowns = isUnknown ? [...prevUnknowns, currentWord_] : prevUnknowns;
+
+        if (allUnknowns.length > 0) {
+          const shuffledUnknowns = shuffle(allUnknowns);
+          setReviewWords(shuffledUnknowns);
+          setCurrentIndex(0);
+          setShowAnswer(false);
+          setIsReviewingUnknowns(true);
+          return allUnknowns;
+        }
+
+        // Check if there are more words in the next batch
+        const nextOffset = batchOffset + BATCH_SIZE;
+        if (nextOffset < allCategoryWords.length) {
+          const nextBatch = allCategoryWords.slice(nextOffset, nextOffset + BATCH_SIZE);
+          setBatchOffset(nextOffset);
+          setReviewWords(nextBatch);
+          setCurrentIndex(0);
+          setShowAnswer(false);
+        } else {
+          setView('categories');
+        }
+        return allUnknowns;
+      });
     }
-  }, [currentIndex, reviewWords, recordReview]);
+  }, [currentIndex, reviewWords, recordReview, isReviewingUnknowns, batchOffset, allCategoryWords, shuffle]);
 
   const handlePdfSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -252,16 +310,36 @@ export default function VocabularyPage() {
           <Button variant="ghost" size="sm" onClick={() => setView('categories')}>
             <ArrowLeft className="mr-1 h-4 w-4" /> {t('vocab.back')}
           </Button>
-          <span className="text-sm text-muted-foreground">{currentIndex + 1}/{reviewWords.length}</span>
+          <div className="flex items-center gap-2">
+            {isReviewingUnknowns && (
+              <Badge variant="destructive" className="text-[10px]">
+                <RotateCcw className="mr-1 h-3 w-3" /> {lang === 'en' ? 'Review' : 'Tekrar'}
+              </Badge>
+            )}
+            <span className="text-sm text-muted-foreground">{currentIndex + 1}/{reviewWords.length}</span>
+          </div>
         </div>
         <Progress value={((currentIndex + 1) / reviewWords.length) * 100} className="h-2" />
+        {!isReviewingUnknowns && allCategoryWords.length > BATCH_SIZE && (
+          <p className="text-xs text-center text-muted-foreground">
+            {lang === 'en'
+              ? `Batch ${Math.floor(batchOffset / BATCH_SIZE) + 1} of ${Math.ceil(allCategoryWords.length / BATCH_SIZE)}`
+              : `Grup ${Math.floor(batchOffset / BATCH_SIZE) + 1} / ${Math.ceil(allCategoryWords.length / BATCH_SIZE)}`
+            }
+          </p>
+        )}
 
         <Card className="min-h-[340px]" onClick={() => !showAnswer && setShowAnswer(true)}>
           <CardContent className="flex flex-col items-center justify-center p-8 text-center min-h-[340px]">
             {currentWord.emoji && (
               <span className="text-5xl mb-3">{currentWord.emoji}</span>
             )}
-            <p className="text-sm text-muted-foreground mb-2">{currentWord.partOfSpeech}</p>
+            <div className="flex items-center gap-2 mb-2">
+              <p className="text-sm text-muted-foreground">{currentWord.partOfSpeech}</p>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${levelBadgeColors[currentWord.level] || ''}`}>
+                {currentWord.level}
+              </span>
+            </div>
             <p className="text-3xl font-bold mb-1">
               {currentWord.article ? `${currentWord.article} ` : ''}{currentWord.german}
             </p>
@@ -499,9 +577,12 @@ export default function VocabularyPage() {
                   <div className="max-h-48 space-y-1.5 overflow-y-auto">
                     {pdfResult.words.map((word, i) => (
                       <div key={i} className="flex items-center justify-between text-sm">
-                        <span className="font-medium">
+                        <span className="font-medium flex items-center gap-1.5">
                           {word.emoji && `${word.emoji} `}
                           {word.article ? `${word.article} ` : ''}{word.german}
+                          <span className={`text-[9px] font-bold px-1 py-0.5 rounded ${levelBadgeColors[word.level] || ''}`}>
+                            {word.level}
+                          </span>
                         </span>
                         <span className="text-muted-foreground text-xs">
                           {getTranslation(word)}
