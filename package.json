@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "fetch-vocab": "npx tsx scripts/fetch-vocabulary.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.73.0",
